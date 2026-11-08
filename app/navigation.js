@@ -622,10 +622,9 @@ export function createNavigation(
     camera.lookAt(smoothTarget);
     snap = false;
   }
-  function updateMovement(dt) {
+  function updateMovement(dt, pad) {
     if (hidden) return;
     elapsed += dt;
-    const pad = gamepad(dt);
     if (state.mode !== 'orbit') {
       const throttle = clamp(
         (keys.has('w') || keys.has('arrowup') ? 1 : 0) -
@@ -681,7 +680,7 @@ export function createNavigation(
         state.speed += (throttle * limit - state.speed) * (1 - Math.exp(-dt * 1.8));
         state.heading -= state.steering * dt * 1.55;
       } else if (state.mode === 'drive') {
-        stepCarDrive(state, throttle, steer, keys.has(' ') || touch.down || pad.brake, dt);
+        stepCarDrive(state, throttle, state.steering, keys.has(' ') || touch.down || pad.brake, dt);
       } else {
         const config = CYCLE;
         const drive = boost ? { ...config, speed: 23, acceleration: config.acceleration * 1.2 } : config;
@@ -711,7 +710,7 @@ export function createNavigation(
       const displacementX = state.velocityX * dt,
         displacementZ = state.velocityZ * dt,
         distance = Math.hypot(displacementX, displacementZ),
-        steps = Math.max(1, Math.ceil(distance / 0.35)),
+        steps = distance > 1e-6 ? Math.ceil(distance / 0.35) : 0,
         body = movementBody(state.mode, state.heading);
       for (let i = 0; i < steps; i++) {
         stepOrigin.set(state.x, state.y, state.z);
@@ -792,8 +791,8 @@ export function createNavigation(
         state.speed =
           state.cameraPreset === 'pov' ? forwardSpeed : Math.hypot(state.velocityX, state.velocityZ);
       }
-      const ground = supportHeight(state.x, state.z, state.y);
       if (fly) {
+        const ground = supportHeight(state.x, state.z, state.y);
         const v =
           ((keys.has('e') || keys.has(' ') || touch.up || pad.jump ? 1 : 0) -
             (keys.has('q') || touch.down || pad.brake ? 1 : 0)) *
@@ -808,6 +807,7 @@ export function createNavigation(
         state.y = vertical.y;
         if (vertical.hit) state.verticalSpeed = 0;
       } else if (walk) {
+        const ground = supportHeight(state.x, state.z, state.y);
         Object.assign(
           state,
           stepWalkingVertical(
@@ -820,7 +820,7 @@ export function createNavigation(
           ),
         );
       } else {
-        state.y = ground;
+        if (!state.grounded) state.y = supportHeight(state.x, state.z, state.y);
         state.grounded = true;
         state.verticalSpeed = 0;
       }
@@ -830,8 +830,9 @@ export function createNavigation(
   function update(dt, frameSeconds = dt) {
     if (hidden || !(dt > 0) || !(frameSeconds > 0)) return;
     const { x, z } = state;
+    const pad = gamepad(dt);
     const steps = Math.max(1, Math.ceil(dt / (1 / 120)));
-    for (let i = 0; i < steps; i++) updateMovement(dt / steps);
+    for (let i = 0; i < steps; i++) updateMovement(dt / steps, pad);
     // Measure motion after collisions and against elapsed time, including frames
     // when simulation time is capped to keep the physics stable.
     state.groundSpeed = Math.hypot(state.x - x, state.z - z) / frameSeconds;

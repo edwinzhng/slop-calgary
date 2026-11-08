@@ -45,9 +45,10 @@ export function createActors(scene, world, { player = createCivilianPlayer(), to
   }
   const traffic = createCarInstances(scene, {
     name: 'Calgary traffic',
-    capacity: touchGraphics ? 44 : TRAFFIC_LIMITS.highVisible,
+    capacity: touchGraphics ? 52 : TRAFFIC_LIMITS.highVisible,
     castShadow: false,
     receiveShadow: false,
+    frustumCulled: false,
   });
   const buses = createCityBuses(scene);
   const sparks = createVehicleSparks(scene);
@@ -56,7 +57,7 @@ export function createActors(scene, world, { player = createCivilianPlayer(), to
       world,
       graph,
       rng,
-      touchGraphics ? 132 : TRAFFIC_LIMITS.fleet,
+      touchGraphics ? TRAFFIC_LIMITS.touchFleet : TRAFFIC_LIMITS.fleet,
     ),
     fleet = trafficSimulation.fleet;
   for (const car of fleet) car.color = new THREE.Color(TRAFFIC_PAINTS[car.paintIndex]);
@@ -168,7 +169,10 @@ export function createActors(scene, world, { player = createCivilianPlayer(), to
     populationZ = z;
     populationTimer = 0;
     camera.getWorldDirection(look);
-    trafficSimulation.populate({ x, z, lookX: look.x, lookZ: look.z, initial }, touchGraphics ? 7 : 10);
+    trafficSimulation.populate(
+      { x, z, lookX: look.x, lookZ: look.z, initial },
+      touchGraphics ? TRAFFIC_LIMITS.touchNearby : TRAFFIC_LIMITS.nearby,
+    );
     const edges = [...trafficSimulation.spawnIndex.near(x, z, radius)].filter(
       (edge) => edge.length > 11 && !edge.road.bridge && !/motorway|trunk/.test(edge.road.kind),
     );
@@ -226,6 +230,9 @@ export function createActors(scene, world, { player = createCivilianPlayer(), to
     return false;
   };
   const dummy = new THREE.Object3D();
+  const trafficFrustum = new THREE.Frustum(),
+    trafficProjection = new THREE.Matrix4(),
+    trafficBounds = new THREE.Sphere();
   const contactShadow = (() => {
     const material = new THREE.MeshBasicNodeMaterial({ transparent: true, depthWrite: false });
     material.colorNode = color(0x24313c);
@@ -357,13 +364,13 @@ export function createActors(scene, world, { player = createCivilianPlayer(), to
       }
       people.end();
       trafficSimulation.step(dt, state, camera);
-      traffic.begin(quality);
+      traffic.begin(quality, quality === 'high' ? 110 : quality === 'performance' ? 35 : 55);
       buses.count = 0;
       let count = 0;
       const visibleCap = touchGraphics
           ? mobile
-            ? 32
-            : 44
+            ? 44
+            : 52
           : quality === 'high'
             ? TRAFFIC_LIMITS.highVisible
             : TRAFFIC_LIMITS.balancedVisible,
@@ -381,20 +388,36 @@ export function createActors(scene, world, { player = createCivilianPlayer(), to
         camera,
         bicycle.steering.rotation.y,
       );
+      camera.updateMatrixWorld();
+      trafficProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      trafficFrustum.setFromProjectionMatrix(
+        trafficProjection,
+        camera.coordinateSystem,
+        camera.reversedDepth,
+      );
+      const blink = Math.floor((world.infrastructure?.signalTime ?? 0) * 2) % 2 === 0 ? 1 : 0;
       for (const car of nearby) {
         if (count >= visibleCap) break;
         const e = car.edge,
           px = car.x,
           pz = car.z;
-        const ahead = world.surfaceHeight(px + Math.sin(e.heading) * 2, pz + Math.cos(e.heading) * 2, e.road);
-        const behind = world.surfaceHeight(
-          px - Math.sin(e.heading) * 2,
-          pz - Math.cos(e.heading) * 2,
-          e.road,
-        );
+        trafficBounds.center.set(px, car.y + 1, pz);
+        trafficBounds.radius = car.model === 'bus' ? 6.6 : 2.7;
+        if (!trafficFrustum.intersectsSphere(trafficBounds)) continue;
+        if (car.pitchEdge !== e || Math.hypot(px - car.pitchX, pz - car.pitchZ) > 1.5) {
+          const dx = Math.sin(e.heading) * 2,
+            dz = Math.cos(e.heading) * 2;
+          const ahead = world.surfaceHeight(px + dx, pz + dz, e.road);
+          const behind = world.surfaceHeight(px - dx, pz - dz, e.road);
+          car.pitchTarget = -Math.atan2(ahead - behind, 4);
+          car.pitchEdge = e;
+          car.pitchX = px;
+          car.pitchZ = pz;
+        }
+        car.pitch = THREE.MathUtils.damp(car.pitch ?? car.pitchTarget, car.pitchTarget, 14, dt);
         dummy.position.set(px, car.y + 0.025, pz);
         dummy.scale.setScalar(1);
-        dummy.rotation.set(-Math.atan2(ahead - behind, 4), car.heading, 0, 'YXZ');
+        dummy.rotation.set(car.pitch, car.heading, 0, 'YXZ');
         dummy.updateMatrix();
         if (car.model === 'bus') {
           if (buses.count < buses.instanceMatrix.count) buses.setMatrixAt(buses.count++, dummy.matrix);
@@ -402,13 +425,12 @@ export function createActors(scene, world, { player = createCivilianPlayer(), to
           continue;
         }
         const turn =
-            car.nextEdge && (1 - car.t) * e.length < 18
-              ? Math.atan2(
-                  Math.sin(car.nextEdge.heading - e.heading),
-                  Math.cos(car.nextEdge.heading - e.heading),
-                )
-              : 0,
-          blink = Math.floor((world.infrastructure?.signalTime ?? 0) * 2) % 2 === 0 ? 1 : 0;
+          car.nextEdge && (1 - car.t) * e.length < 18
+            ? Math.atan2(
+                Math.sin(car.nextEdge.heading - e.heading),
+                Math.cos(car.nextEdge.heading - e.heading),
+              )
+            : 0;
         traffic.add(
           car.id,
           dummy.matrix,

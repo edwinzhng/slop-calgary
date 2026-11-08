@@ -29,6 +29,7 @@ import { createInfrastructureSurfaces, buildInfrastructure, isPeaceBridgeRoad } 
 import { footprintContact, movementBody } from './camera-collision.js';
 import { buildRoadMarkings } from './road-markings.js';
 import { createRailClearance, trimRailCollider, trimRailGeometry } from './rail-clearance.js';
+import { createPlus15Clearance } from './plus15-clearance.js';
 import { createParks } from './parks.js';
 import { buildWesternTowerLights } from './landmark-west.js';
 import { coveredFallbacks, fallbackVolumeKey } from './building-ownership.js';
@@ -629,6 +630,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
     infrastructureSurfaces.surfaceHeight,
   );
   const railBuildingCuts = { meshes: 0, colliders: 0 };
+  const underPlus15 = createPlus15Clearance(infrastructureSurfaces.skywalks, roadIndex);
   const fallbackVolumes = new Set(),
     partialCompoundsRendered = new Set();
   let count = 0,
@@ -801,17 +803,17 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
               : {}),
           }),
         );
-    } else
-      insertCollider(
-        placeCollider({
-          ...b,
-          height,
-          minHeight: meshRecord?.minHeight ?? proof?.occupiedHeightMin ?? -1,
-          ...(primaryRecord && geometrySource.collisionHeightAt
-            ? { heightAt: (x, z, body) => geometrySource.collisionHeightAt(b.id, x, z, body) }
-            : {}),
-        }),
-      );
+    } else {
+      const part = placeCollider({
+        ...b,
+        height,
+        minHeight: meshRecord?.minHeight ?? proof?.occupiedHeightMin ?? -1,
+        ...(primaryRecord && geometrySource.collisionHeightAt
+          ? { heightAt: (x, z, body) => geometrySource.collisionHeightAt(b.id, x, z, body) }
+          : {}),
+      });
+      insertCollider(primaryRecord ? underPlus15(part, geometrySource, placement?.offsetM) : part);
+    }
     if (!meshRecord && duplicates.has(b.id)) {
       removedDuplicates++;
       continue;
@@ -1218,7 +1220,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
       position.z,
       Math.max(body.extX ?? body.radius, body.extZ ?? body.radius),
     )) {
-      if (footprintContact(b, position.x, position.y, position.z, body, contact)) return true;
+      if (footprintContact(b, position.x, position.y, position.z, body)) return true;
     }
     return (
       trunks.blocked(position, body) ||

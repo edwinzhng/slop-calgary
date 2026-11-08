@@ -81,7 +81,7 @@
     "app/ground-surfaces.js": "9f24de22b8cd2ddc3ade9e487e2ea50295ef8dfca7dc3be4a97dce22558d8848",
     "app/linear-polygon-geometry.js": "44a8783df71069468d7b7d53695edec222c9223253c9145e086e6b92e392257b",
     "app/polygon-queries.js": "96a017f992e3a10c1133d04b29bf85a687cba70250549351412e608528eaec13",
-    "app/car-instances.js": "2b05f9127ec1d09f5f3071e59923cb06afe346830a2f4152a0a561ddb5990586",
+    "app/car-instances.js": "756fe532d5fd7019c6051ecdcf5d24b8698986f481cc182f17557dfb9225e310",
     "app/island-terrain.js": "f7c487800ff3c027346b530b6c74e0806cd50c5cad28e75b66db04da6b01afa0",
     "app/neighbourhood-terrain.js": "141d51682d789e4714ecedc8dd23469eec549032f401ac042085a8707d9f103e",
     "app/terrain-polygons.js": "8b8bbc08980e6711c773f344dfcb41c711a36919a761f4320fc0a83c93f47f9d",

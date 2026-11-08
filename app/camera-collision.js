@@ -8,10 +8,15 @@ const polygonCache = new WeakMap();
 export function colliderPolygon(building) {
   if (!polygonCache.has(building))
     polygonCache.set(building, {
+      box: bounds(building.ring),
       outer: building.ring.map(([x, z]) => ({ x, z })),
       holes: (building.holes || []).map((ring) => ring.map(([x, z]) => ({ x, z }))),
     });
   return polygonCache.get(building);
+}
+
+function overlapsBounds({ box }, x, z, extX, extZ) {
+  return x + extX >= box.minX && x - extX <= box.maxX && z + extZ >= box.minZ && z - extZ <= box.maxZ;
 }
 
 export function movementBody(mode, heading = 0, radius) {
@@ -36,13 +41,20 @@ export function movementBody(mode, heading = 0, radius) {
 }
 
 export function footprintContact(building, x, y, z, body, contact) {
-  if (y >= building.height || y + (body.top ?? 1.8) <= (building.minHeight ?? -1)) return false;
+  const top = y + (body.top ?? 1.8);
+  if (y >= building.height || top <= (building.minHeight ?? -1)) return false;
+  const polygon = colliderPolygon(building),
+    extX =
+      body.extX ?? (body.car ? Math.abs(body.cos) * body.hx + Math.abs(body.sin) * body.hz : body.radius),
+    extZ =
+      body.extZ ?? (body.car ? Math.abs(body.sin) * body.hx + Math.abs(body.cos) * body.hz : body.radius);
+  if (!overlapsBounds(polygon, x, z, extX, extZ)) return false;
   if (
-    y >= (building.heightAt?.(x, z, body) ?? building.height) ||
-    y + (body.top ?? 1.8) <= (building.minHeightAt?.(x, z, body) ?? building.minHeight ?? -1)
+    top <= (building.minHeightAt?.(x, z, body) ?? building.minHeight ?? -1) ||
+    y >= (building.heightAt?.(x, z, body) ?? building.height)
   )
     return false;
-  return polygonContact(colliderPolygon(building), x, z, body, contact);
+  return polygonContact(polygon, x, z, body, contact);
 }
 
 function segmentPrism(a, b, width, minHeight, height, id) {
@@ -113,10 +125,13 @@ export function createCameraCollision(world) {
       for (const building of collection || []) {
         if (position.y - radius >= building.height || position.y + radius <= (building.minHeight ?? -1))
           continue;
-        const low = building.minHeightAt?.(position.x, position.z, circle) ?? building.minHeight ?? -1,
-          high = building.heightAt?.(position.x, position.z, circle) ?? building.height;
-        if (position.y + radius <= low || position.y - radius >= high) continue;
-        if (!polygonContact(colliderPolygon(building), position.x, position.z, circle, contact)) continue;
+        const polygon = colliderPolygon(building);
+        if (!overlapsBounds(polygon, position.x, position.z, radius, radius)) continue;
+        const low = building.minHeightAt?.(position.x, position.z, circle) ?? building.minHeight ?? -1;
+        if (position.y + radius <= low) continue;
+        const high = building.heightAt?.(position.x, position.z, circle) ?? building.height;
+        if (position.y - radius >= high || !polygonContact(polygon, position.x, position.z, circle, contact))
+          continue;
         best.set(contact.nx * (contact.depth + 0.012), 0, contact.nz * (contact.depth + 0.012));
         const up = high + radius + 0.015 - position.y,
           down = position.y - low + radius + 0.015;

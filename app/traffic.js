@@ -9,7 +9,10 @@ export const TRAFFIC_PAINTS = Object.freeze([
 export const trafficVehicleModel = (sample) => (sample < 0.3 ? 'pickup' : 'sedan');
 
 export const TRAFFIC_LIMITS = Object.freeze({
-  fleet: 240,
+  fleet: 144,
+  touchFleet: 88,
+  nearby: 32,
+  touchNearby: 24,
   balancedVisible: 65,
   highVisible: 100,
   acceleration: 2.6,
@@ -25,6 +28,7 @@ const BUS_BODY = Object.freeze({ halfWidth: 1.29, halfLength: 6.08, top: 3.35 })
 const trafficBody = (car) => (car.model === 'bus' ? BUS_BODY : TRAFFIC_LIMITS);
 const busStreet = (road) =>
   /primary|secondary|tertiary/.test(road.kind) && roadWidth(road) > 6.8 && !road.tunnel;
+const throughStreet = (road) => road.kind !== 'service' || Boolean(road.name);
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const dot = (ax, az, bx, bz) => ax * bx + az * bz;
 const cross = (ax, az, bx, bz) => ax * bz - az * bx;
@@ -239,7 +243,9 @@ function cruisingSpeed(road, seed) {
 
 export function createTrafficSimulation(world, graph, rng, count = TRAFFIC_LIMITS.fleet) {
   const limits = cityLimits(world.data),
-    spawnEdges = graph.edges.filter((e) => inLimits((e.a[0] + e.b[0]) / 2, (e.a[1] + e.b[1]) / 2, limits)),
+    spawnEdges = graph.edges.filter(
+      (e) => throughStreet(e.road) && inLimits((e.a[0] + e.b[0]) / 2, (e.a[1] + e.b[1]) / 2, limits),
+    ),
     spawnIndex = new SpatialIndex(160),
     fleet = [],
     index = new SpatialIndex(32),
@@ -271,6 +277,8 @@ export function createTrafficSimulation(world, graph, rng, count = TRAFFIC_LIMIT
       );
       if (avenues.length) return avenues[Math.floor(rng() * avenues.length)];
     }
+    const streets = choices.filter((next) => throughStreet(next.road));
+    if (streets.length) return streets[Math.floor(rng() * streets.length)];
     if (choices.length) return choices[Math.floor(rng() * choices.length)];
     return (graph.nodes.get(edge.end) || []).find((n) => n.end === edge.key) || null;
   };
@@ -291,8 +299,7 @@ export function createTrafficSimulation(world, graph, rng, count = TRAFFIC_LIMIT
       const edge = candidates[Math.floor(rng() * candidates.length)];
       if (!edge) break;
       const t = 0.08 + rng() * 0.84,
-        pose = trafficLanePosition(edge, t, car.lane),
-        y = world.surfaceHeight?.(pose.x, pose.z, edge.road) ?? 0.18;
+        pose = trafficLanePosition(edge, t, car.lane);
       if (local) {
         const dx = pose.x - local.x,
           dz = pose.z - local.z;
@@ -300,22 +307,14 @@ export function createTrafficSimulation(world, graph, rng, count = TRAFFIC_LIMIT
         if (
           distance < (local.initial ? 30 : 90) ||
           distance > 285 ||
+          (local.initial && trial < 20 && dx * local.lookX + dz * local.lookZ < distance * 0.32) ||
           (!local.initial && distance < 235 && dx * local.lookX + dz * local.lookZ > distance * 0.28)
         )
           continue;
       } else if (camera && Math.hypot(pose.x - camera.position.x, pose.z - camera.position.z) < 260) {
         continue;
       }
-      if (
-        fleet.some(
-          (other) =>
-            other !== car &&
-            other.edge &&
-            Math.hypot(other.x - pose.x, other.z - pose.z) <
-              trafficBody(car).halfLength + trafficBody(other).halfLength + 2,
-        )
-      )
-        continue;
+      const y = world.surfaceHeight?.(pose.x, pose.z, edge.road) ?? 0.18;
       carBody.sin = Math.sin(edge.heading);
       carBody.cos = Math.cos(edge.heading);
       const shape = trafficBody(car);
@@ -323,7 +322,20 @@ export function createTrafficSimulation(world, graph, rng, count = TRAFFIC_LIMIT
       carBody.hz = shape.halfLength;
       carBody.radius = carBody.extX = carBody.extZ = Math.hypot(shape.halfWidth, shape.halfLength);
       carBody.top = shape.top;
-      if (world.bodyBlocked?.({ x: pose.x, y, z: pose.z }, carBody)) continue;
+      const placement = { x: pose.x, y, z: pose.z };
+      carBody.hz += 1.5;
+      const occupied = fleet.some((other) => {
+        if (
+          other === car ||
+          !other.edge ||
+          Math.abs(other.x - pose.x) > 15 ||
+          Math.abs(other.z - pose.z) > 15
+        )
+          return false;
+        return trafficBodyContact(placement, carBody, other);
+      });
+      carBody.hz = shape.halfLength;
+      if (occupied || world.bodyBlocked?.(placement, carBody)) continue;
       car.edge = edge;
       car.t = t;
       car.previousEdge = null;
@@ -336,6 +348,8 @@ export function createTrafficSimulation(world, graph, rng, count = TRAFFIC_LIMIT
       car.controls = null;
       car.policyClock = 0;
       car.dodge = car.dodgeVelocity = 0;
+      car.pitchEdge = null;
+      car.pitch = undefined;
       setPose(car, true);
       return true;
     }
@@ -749,7 +763,7 @@ export function createTrafficSimulation(world, graph, rng, count = TRAFFIC_LIMIT
       );
       const spare = fleet.filter((car) => !car.edge || Math.hypot(car.x - local.x, car.z - local.z) > 570);
       const context = { ...local, edges };
-      for (let i = 0; i < Math.min(spare.length, 16) && nearby < minimum; i++) {
+      for (let i = 0; i < Math.min(spare.length, local.initial ? minimum * 2 : 12) && nearby < minimum; i++) {
         if (spawn(spare[i], null, context)) nearby++;
       }
       rebuildIndex();

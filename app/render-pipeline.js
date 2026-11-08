@@ -120,7 +120,7 @@ export function createCityPipeline(renderer, scene, camera, quality = 'balanced'
     }
   }
   function setQuality(value) {
-    reflections.resolutionScale = value === 'high' ? 0.5 : value === 'performance' ? 0.12 : 0.35;
+    reflections.resolutionScale = value === 'high' ? 0.5 : value === 'performance' ? 0.12 : 0.27;
     reflections.quality.value = value === 'high' ? 0.25 : value === 'performance' ? 0.1 : 0.18;
     grade.setQuality(value);
   }

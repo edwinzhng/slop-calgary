@@ -3,7 +3,10 @@ import { BODY_SPECS, buildCarGeometry, buildCarProxyGeometry, createLoftedCarMat
 
 // Keep the full body nearby and use the reference's matching distant silhouette.
 // The simulation and collision bodies stay independent of these render meshes.
-export function createCarInstances(scene, { name, capacity, castShadow = true, receiveShadow = true }) {
+export function createCarInstances(
+  scene,
+  { name, capacity, castShadow = true, receiveShadow = true, frustumCulled = true },
+) {
   const byModel = {};
   for (const model of ['sedan', 'pickup']) {
     const spec = BODY_SPECS[model],
@@ -21,6 +24,7 @@ export function createCarInstances(scene, { name, capacity, castShadow = true, r
       mesh.name = `${name} / ${model} / ${index ? 'distant' : 'nearby'}`;
       mesh.castShadow = castShadow;
       mesh.receiveShadow = receiveShadow;
+      mesh.frustumCulled = frustumCulled;
       mesh.count = 0;
       scene.add(mesh);
       return mesh;
@@ -39,8 +43,8 @@ export function createCarInstances(scene, { name, capacity, castShadow = true, r
   return {
     meshes,
     stats,
-    begin(quality = 'balanced') {
-      threshold = quality === 'high' ? 150 : quality === 'performance' ? 40 : 100;
+    begin(quality = 'balanced', nearDistance) {
+      threshold = nearDistance ?? (quality === 'high' ? 150 : quality === 'performance' ? 40 : 100);
       seen.clear();
       total = 0;
       for (const mesh of meshes) mesh.count = 0;
@@ -67,10 +71,11 @@ export function createCarInstances(scene, { name, capacity, castShadow = true, r
       stats.pickups = byModel.pickup[0].count + byModel.pickup[1].count;
       stats.triangles = 0;
       for (const mesh of meshes) {
+        if (!mesh.count) continue;
         mesh.instanceMatrix.needsUpdate = true;
         mesh.geometry.attributes.paintColor.needsUpdate = true;
         mesh.geometry.attributes.carState.needsUpdate = true;
-        mesh.computeBoundingSphere();
+        if (frustumCulled) mesh.computeBoundingSphere();
         stats.triangles +=
           ((mesh.geometry.index?.count || mesh.geometry.attributes.position.count) / 3) * mesh.count;
       }

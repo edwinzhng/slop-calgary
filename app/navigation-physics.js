@@ -9,8 +9,13 @@ export const DRIVE = Object.freeze({
   coast: 0.6,
   brake: 9,
   wheelbase: 2.76,
-  grip: 9.5,
-  cornering: 10.5,
+  grip: 23,
+  steerAngle: 0.9,
+  steerFade: 0.027,
+  steerResponse: 28,
+  steerReturn: 36,
+  cornerSpeed: 13.5,
+  cornerBrake: 23,
 });
 export const CYCLE = Object.freeze({
   speed: 19,
@@ -54,32 +59,23 @@ export function turnRate(speed, steering, drive) {
   return Math.max(-limit, Math.min(limit, desired));
 }
 
-const clamp = (value, limit) => Math.max(-limit, Math.min(limit, value));
-
-// Slop New York's speed-dependent steering and tire slip, with Calgary's
-// stronger engine tune. The caller already steps at 120 Hz.
+// Keep speed-dependent steering and some tire slip, with enough authority to
+// make city turns under throttle. Sharp turns brake from the entry speed.
 export function stepCarDrive(state, throttle, steering, brake, dt) {
   const forward = state.speed,
-    speed = driveSpeed(forward, brake ? -Math.sign(forward) : throttle, dt, DRIVE),
-    acceleration = (speed - forward) / dt,
-    tireForce = acceleration + DRIVE.drag * forward * Math.abs(forward),
-    longitudinal = Math.sign(forward) * acceleration > 0 ? clamp(tireForce, DRIVE.grip * 0.78) : tireForce,
-    grip = Math.sqrt(Math.max(0, DRIVE.grip ** 2 - longitudinal ** 2)),
-    slide =
-      (brake ? 1 : forward * throttle < 0 ? Math.abs(throttle) : 0) * Math.min(1, Math.abs(forward) / 5),
-    steeringGrip = grip + (DRIVE.grip - grip) * slide,
-    turn = DRIVE.wheelbase * DRIVE.cornering,
-    lock = Math.atan(turn / Math.max(speed * speed, turn / Math.tan(0.6)));
-  state.steerAngle += (-steering * lock - state.steerAngle) * (1 - Math.exp(-10 * dt));
-  const yawLimit = steeringGrip / Math.max(2, Math.abs(speed)),
-    target = clamp((speed * Math.tan(state.steerAngle)) / DRIVE.wheelbase, yawLimit),
-    yaw = state.yawRate + clamp((target - state.yawRate) * (1 - Math.exp(-5 * dt)), steeringGrip * 0.65 * dt),
+    powered = driveSpeed(forward, brake ? -Math.sign(forward) : throttle, dt, DRIVE),
+    speed = corneringSpeed(powered, steering, dt, DRIVE, forward),
+    lock = DRIVE.steerAngle / (1 + Math.abs(speed) * DRIVE.steerFade),
+    slide = (brake || forward * throttle < 0) && Math.abs(forward) > 5;
+  state.steerAngle = -steering * lock;
+  const target = -turnRate(speed, steering, DRIVE),
+    yaw = state.yawRate + (target - state.yawRate) * (1 - Math.exp(-24 * dt)),
     angle = yaw * dt,
     cos = Math.cos(angle),
     sin = Math.sin(angle),
     slip = state.lateralSpeed * cos - speed * sin;
   state.speed = speed * cos + state.lateralSpeed * sin;
-  state.lateralSpeed = slip + clamp(-slip * (1 - Math.exp(-4 * dt)), grip * (1 - 0.7 * slide) * dt);
+  state.lateralSpeed = slip * Math.exp(-(slide ? 5 : 15) * dt);
   state.heading += angle;
 }
 
@@ -95,12 +91,16 @@ export function steeringApproach(current, input, dt, config = DRIVE) {
 
 // A held sharp turn eases off excess speed instead of demanding a perfect brake input.
 // Straight-line boost/top speed are unaffected; this is an exploration driving assist.
-export function corneringSpeed(speed, steering, dt, config) {
+export function corneringSpeed(speed, steering, dt, config, entrySpeed = speed) {
   if (!(dt > 0) || !config.cornerSpeed) return speed;
   const amount = Math.max(0, Math.min(1, (Math.abs(steering) - 0.35) / 0.65));
   const limit = config.cornerSpeed / Math.max(0.25, amount);
+  const entry = Math.sign(entrySpeed) === Math.sign(speed) ? Math.abs(entrySpeed) : 0;
   return (
     Math.sign(speed) *
-    Math.max(Math.min(Math.abs(speed), limit), Math.abs(speed) - (config.cornerBrake ?? 0) * amount * dt)
+    Math.max(
+      Math.min(Math.abs(speed), limit),
+      Math.min(Math.abs(speed), entry) - (config.cornerBrake ?? 0) * amount * dt,
+    )
   );
 }

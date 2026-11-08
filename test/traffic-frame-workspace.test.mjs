@@ -1,12 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { SpatialIndex, seeded } from '../app/geo.js';
+import { makeRoadGraph, SpatialIndex, seeded } from '../app/geo.js';
 import {
   avoidanceOffset,
+  createTrafficSimulation,
   rightLaneOffset,
   trafficBodyContact,
   trafficLanePosition,
   trafficVehicleModel,
+  TRAFFIC_LIMITS,
 } from '../app/traffic.js';
 import { createTrafficFrameWorkspace, writeTrafficRoutePose } from '../app/traffic-frame-workspace.js';
 
@@ -43,6 +45,43 @@ function edge(heading, length, road = {}) {
     road: { kind: 'primary', lanes: 4, ...road },
   };
 }
+
+test('the smaller fleet fills nearby streets without overlapping vehicles', () => {
+  const roads = Array.from({ length: 161 }, (_, i) => ({
+    id: `city-street-${i}`,
+    kind: 'secondary',
+    lanes: 4,
+    width: 12.8,
+    points: [
+      [-240, (i - 10) * 35],
+      [-90, (i - 10) * 35],
+      [90, (i - 10) * 35],
+      [240, (i - 10) * 35],
+    ],
+  }));
+  const simulation = createTrafficSimulation(
+    { data: { roads }, surfaceHeight: () => 0.18 },
+    makeRoadGraph(roads),
+    seeded(53),
+    TRAFFIC_LIMITS.touchFleet,
+  );
+  const inNeighborhood = (car) => car.edge && Math.hypot(car.x, car.z) < 290;
+  assert.ok(simulation.fleet.filter(inNeighborhood).length < TRAFFIC_LIMITS.touchNearby);
+  simulation.populate({ x: 0, z: 0, lookX: 0, lookZ: 1, initial: true }, TRAFFIC_LIMITS.touchNearby);
+  const local = simulation.fleet.filter(inNeighborhood);
+  assert.ok(local.length >= TRAFFIC_LIMITS.touchNearby);
+  for (const [i, car] of local.entries()) {
+    const bus = car.model === 'bus';
+    const body = {
+      car: true,
+      cos: Math.cos(car.heading),
+      sin: Math.sin(car.heading),
+      hx: bus ? 1.29 : 0.9,
+      hz: bus ? 6.08 : 2.3,
+    };
+    for (const other of local.slice(i + 1)) assert.equal(trafficBodyContact(car, body, other), false);
+  }
+});
 
 test('traffic reacts to a predicted crossing at the same level while buses keep their longer collision body', () => {
   const street = edge(0, 120, { width: 14 }),

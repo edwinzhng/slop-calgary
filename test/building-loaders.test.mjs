@@ -3,9 +3,37 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { loadHaydenBlock, HAYDEN_BLOCK_BASELINE_ID } from '../app/hayden-block.js';
 import { loadAllPartialBuildings } from '../app/additional-city-buildings.js';
+import { loadCityMeshes } from '../app/city-meshes.js';
+import { footprintContact, movementBody } from '../app/camera-collision.js';
+import { makeRoadIndex } from '../app/geo.js';
+import { createPlus15Clearance } from '../app/plus15-clearance.js';
 
 const map = JSON.parse(await fs.readFile(new URL('../data/calgary.json', import.meta.url)));
 const fileFetch = async (url) => new Response(await fs.readFile(url));
+
+test('6 Avenue SW uses the measured underside of its Plus 15 across the whole roadway', async () => {
+  const street = map.roads.find((road) => road.id === 'osm-way-166790915-0');
+  const skywalk = map.roads.find((road) => road.id === 'osm-way-127718626-0');
+  const footprint = map.buildings.find((building) => building.id === 'osm-way-585756596');
+  const meshes = await loadCityMeshes({ fetcher: fileFetch });
+  const record = meshes.get(footprint.id);
+  const solid = { ...footprint, minHeight: record.minHeight, height: record.height };
+  const clear = createPlus15Clearance([skywalk], makeRoadIndex([street]))(solid, meshes);
+  const body = movementBody('drive', -1.624316595254209);
+  assert.equal(footprintContact(solid, 173.5, 0.115, -203.7, body), true);
+  for (const laneZ of [-210.1, -206.9, -203.7, -200.5, -197.3]) {
+    for (let x = 161; x <= 189; x += 0.5) {
+      const z = laneZ + (x - 173.5) * 0.05;
+      assert.equal(footprintContact(clear, x, 0.115, z, body), false, `blocked at ${x}, ${z}`);
+    }
+  }
+  assert.equal(footprintContact(clear, 173.5, 4.7, -203.7, body), true, 'the overhead shell is solid');
+  assert.equal(
+    footprintContact(clear, 174.8, 0.115, -235, body),
+    true,
+    'the adjoining block retains its footprint',
+  );
+});
 
 test('all three building batches download while the source map is pending, then validate ownership', async () => {
   let resolveMap;

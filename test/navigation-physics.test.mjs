@@ -44,23 +44,28 @@ test('the car brakes before reversing at the same rate in either direction', () 
   }
 });
 
-test('the car launches quickly while retaining speed-dependent steering and tire slip', () => {
+test('full-throttle city turns are tight and a fast approach slows into the corner', () => {
   assert.ok(simulate(DRIVE, 60, 0.5) > 10);
   const turn = (speed) => {
-    const car = { speed, heading: 0, yawRate: 0, lateralSpeed: 0, steerAngle: 0 };
+    const car = { speed, heading: 0, yawRate: 0, lateralSpeed: 0, steerAngle: 0, steering: 0 };
     const dt = 1 / 120;
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 144; i++) {
       const previous = car.heading;
-      stepCarDrive(car, 0, 1, false, dt);
+      car.steering = steeringApproach(car.steering, 1, dt);
+      stepCarDrive(car, Math.sign(speed) || 1, car.steering, false, dt);
       car.yawRate = (car.heading - previous) / dt;
     }
     return car;
   };
-  const slow = turn(6),
-    fast = turn(27);
-  assert.ok(Math.abs(slow.steerAngle) > 0.5 && Math.abs(fast.steerAngle) < 0.12);
-  assert.ok(Math.abs(slow.heading) > Math.abs(fast.heading));
-  assert.ok(fast.lateralSpeed > 0.5 && fast.speed > 20);
+  const fromRest = turn(0),
+    city = turn(10),
+    fast = turn(36),
+    reverse = turn(-5);
+  assert.ok(fromRest.heading < -Math.PI / 2);
+  assert.ok(city.heading < -Math.PI / 2 && city.speed > 8);
+  assert.ok(fast.heading < -1.1 && fast.speed < 15);
+  assert.ok(reverse.heading > Math.PI / 2 && reverse.speed < 0);
+  assert.ok(Math.abs(city.lateralSpeed) < 2);
 });
 
 test('grip limits cornering acceleration and reversing reverses steering', () => {

@@ -62,12 +62,13 @@ async function init() {
     matchMedia('(pointer: coarse) and (hover: none)').matches ||
     (profiler.enabled && query.get('touch') === '1');
   const touchGraphics = quality !== 'high' && touchDevice;
+  const directRendering = touchGraphics || quality === 'performance';
   const resolution = createMobileResolutionBudget();
   const mobilePerformance = touchGraphics && quality === 'performance';
   const resizeBuffer = () =>
     renderer.setPixelRatio(
       renderPixelRatio(innerWidth, innerHeight, devicePixelRatio, quality) *
-        (mobilePerformance ? resolution.scale : 1),
+        (quality === 'high' ? 1 : resolution.scale),
     );
   await progress(0.05, 'Opening the city atlas');
   const readJSON = async (url, label) => {
@@ -84,7 +85,7 @@ async function init() {
   const scene = new THREE.Scene(),
     camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.2, 22000);
   renderer = new THREE.WebGPURenderer({
-    antialias: !mobilePerformance,
+    antialias: quality !== 'performance',
     powerPreference: 'high-performance',
     forceWebGL: query.get('renderer') === 'webgl',
     reversedDepthBuffer: true,
@@ -178,11 +179,11 @@ async function init() {
   renderer.shadowMap.enabled = !mobilePerformance;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   document.getElementById('viewport').append(renderer.domElement);
-  const pipeline = createCityPipeline(renderer, scene, camera, quality, { direct: touchGraphics });
+  const pipeline = createCityPipeline(renderer, scene, camera, quality, { direct: directRendering });
   cityUniforms.uFacadeDetailDistance.value = quality === 'high' ? 600 : 360;
   const sun = new THREE.DirectionalLight(0xffd0a0, 3.1);
   sun.castShadow = !mobilePerformance;
-  sun.shadow.mapSize.setScalar(touchGraphics ? 512 : quality === 'high' ? 2048 : 1024);
+  sun.shadow.mapSize.setScalar(directRendering ? 512 : quality === 'high' ? 2048 : 1024);
   sun.shadow.camera.left = -230;
   sun.shadow.camera.right = 230;
   sun.shadow.camera.top = 230;
@@ -197,7 +198,7 @@ async function init() {
   const citySky = createCitySky(scene, renderer);
   const { sky } = citySky;
   const regionalHorizon = createRegionalHorizon(scene, {
-    useMRT: renderer.backend.isWebGPUBackend && !touchGraphics,
+    useMRT: renderer.backend.isWebGPUBackend && !directRendering,
   });
   const envScene = new THREE.Scene(),
     pmrem = new THREE.PMREMGenerator(renderer);
@@ -418,14 +419,25 @@ async function init() {
     if (audio.enabled) audio.unlock();
     ui?.setAudioState(audio);
   };
+  const qualityNeedsReload = (value) =>
+    touchDevice ||
+    (value === 'high' && compactCity) ||
+    (value === 'performance') !== (quality === 'performance');
+  const labelQualityOptions = () => {
+    for (const option of document.getElementById('quality').options) {
+      const label = option.textContent.replace(' (reloads)', '');
+      option.textContent =
+        option.value !== quality && qualityNeedsReload(option.value) ? `${label} (reloads)` : label;
+    }
+  };
   const setQuality = (value) => {
-    if (!qualityLevels.includes(value)) return;
+    if (!qualityLevels.includes(value) || value === quality) return;
     let saved = false;
     try {
       localStorage.setItem('calgary-quality', value);
       saved = true;
     } catch {}
-    if ((value === 'high' && compactCity) || touchDevice) {
+    if (qualityNeedsReload(value)) {
       if (!saved) {
         document.getElementById('quality').value = quality;
         ui.notice('Allow site storage to change graphics detail');
@@ -437,12 +449,13 @@ async function init() {
     }
     quality = value;
     document.body.dataset.quality = value;
+    labelQualityOptions();
     resizeBuffer();
     pipeline.setQuality(value);
     cityUniforms.uFacadeDetailDistance.value = value === 'high' ? 600 : 360;
     // ShadowNode owns this target and resizes it from mapSize each frame.
     // Disposing it here leaves the compiled lighting graph with a dead texture.
-    sun.shadow.mapSize.setScalar(touchGraphics ? 512 : value === 'high' ? 2048 : 1024);
+    sun.shadow.mapSize.setScalar(directRendering ? 512 : value === 'high' ? 2048 : 1024);
   };
   ui = createUI(nav, world, renderer, setTime, setQuality, camera, {
     forceTouch: profiler.enabled && query.get('touch') === '1',
@@ -462,10 +475,7 @@ async function init() {
   });
   ui.change(nav.state);
   document.getElementById('quality').value = quality;
-  if (touchDevice)
-    for (const option of document.getElementById('quality').options) option.textContent += ' (reloads)';
-  else if (compactCity)
-    document.querySelector('#quality option[value="high"]').textContent = 'High detail (reloads)';
+  labelQualityOptions();
   if (matchMedia('(prefers-reduced-motion:reduce)').matches) {
     nav.state.tour = false;
     nav.orbit.autoRotate = false;
@@ -563,9 +573,9 @@ async function init() {
     avatar: actors.player.avatarStats,
     startup: profiler.startup,
     profiling: profiler.enabled,
-    antialias: mobilePerformance ? 'off' : pipeline.antialias || 'MSAA4',
+    antialias: quality === 'performance' ? 'off' : pipeline.antialias || 'MSAA4',
     cityDetail: compactCity ? 'core' : 'full',
-    renderPath: touchGraphics || !renderer.backend.isWebGPUBackend ? 'direct' : 'post',
+    renderPath: directRendering || !renderer.backend.isWebGPUBackend ? 'direct' : 'post',
   };
   // Read-only diagnostics for repeatable interactive performance checks.
   window.calgary = {
@@ -722,7 +732,7 @@ async function init() {
     stamp = profiler.stamp();
     updateSun(nav.state.x, nav.state.z);
     if (!ui.isMapOpen()) {
-      if (mobilePerformance && resolution.update(paused ? 0 : raw)) resizeBuffer();
+      if (resolution.update(paused || quality === 'high' ? 0 : raw)) resizeBuffer();
       pipeline.render();
     } else {
       resolution.update(0);

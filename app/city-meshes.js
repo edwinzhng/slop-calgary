@@ -198,6 +198,7 @@ export function createCityMeshes(manifest, binary) {
     return geometry;
   }
   const contacts = createMeshHeightCache(createContactProjection);
+  const undersides = createMeshHeightCache(createContactProjection, { minimum: true });
   return {
     manifest,
     count: records.size,
@@ -207,7 +208,11 @@ export function createCityMeshes(manifest, binary) {
     get: (id) => records.get(id) || null,
     createGeometry,
     collisionHeightAt: contacts.heightAt,
+    collisionBottomAt: undersides.heightAt,
     contactStats: contacts.stats,
-    clearContactCache: contacts.clear,
+    clearContactCache() {
+      contacts.clear();
+      undersides.clear();
+    },
   };
 }

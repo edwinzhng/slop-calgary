@@ -95,3 +95,20 @@ test('driving collisions use the vehicle rectangle and preserve courtyard gaps',
   assert.equal(footprintContact(building, -1.4, 0, 5, movementBody('drive', 0), {}), false);
   assert.equal(footprintContact(building, 5, 0, 5, movementBody('walk'), {}), false);
 });
+
+test('out-of-range nearby footprints do not invoke surveyed height projections', () => {
+  let projections = 0;
+  const surveyed = {
+    ...building,
+    heightAt() {
+      projections++;
+      return building.height;
+    },
+  };
+  const camera = createCameraCollision(world([surveyed]));
+  assert.equal(footprintContact(surveyed, 15, 0, 1, movementBody('drive')), false);
+  assert.equal(camera.blocked(new THREE.Vector3(15, 2, 1)), false);
+  assert.equal(projections, 0);
+  assert.equal(camera.blocked(new THREE.Vector3(1, 2, 1)), true);
+  assert.equal(projections, 1);
+});

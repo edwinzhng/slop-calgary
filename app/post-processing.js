@@ -128,7 +128,7 @@ function createPostProcessing(renderer, sceneColor, reflections) {
     outputNode,
     applyPreset,
     setQuality(value) {
-      bloomPass.setResolutionScale(value === 'performance' ? 0.25 : 0.5);
+      bloomPass.setResolutionScale(value === 'performance' ? 0.25 : value === 'balanced' ? 0.35 : 0.5);
     },
   };
 }
