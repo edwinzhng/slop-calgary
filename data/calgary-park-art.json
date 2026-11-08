@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "generatedAt": "2026-10-29T06:11:28.805607+00:00",
+    "sourceType": "Official CADA public map and primary artist/owner facts",
+    "cityArtService": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0",
+    "cityInventoryBBox": [-114.11, 51.02, -114.025, 51.067],
+    "cityInventoryRecords": 69,
+    "cityInventoryComplete": true,
+    "cityInventoryBloomRecords": 0,
+    "cityDataLicense": "Open Government Licence \u2013 City of Calgary",
+    "cityDataLicenseURL": "https://data.calgary.ca/d/Open-Data-Terms/u45n-7awa",
+    "guideSourceSHA256": "3c5e6571bd8dd6cd4dbc95b6cb68088c8bb5dd8de24b5d688dbe7fc59f0fb74d",
+    "citySourceSHA256": "98d1e3a49e230881494487b407c189aad1ef607a217b632e1634fb4d7e60ddb4",
+    "runtimePhotographs": 0,
+    "runtimeThirdPartyModels": 0
+  },
+  "bloom": {
+    "id": "bloom",
+    "title": "Bloom",
+    "artist": "Michel de Broin",
+    "commissioningBody": "Calgary Municipal Land Corporation",
+    "installed": 2015,
+    "longitude": -114.04614017614321,
+    "latitude": 51.04797334537524,
+    "anchorSource": "https://www.calgarypublicartguide.com/works/bloom",
+    "anchorPublisher": "Calgary Arts Development",
+    "anchorUpdatedAt": "2026-06-08T21:50:20Z",
+    "anchorPrecision": "Published map locator; no survey accuracy supplied",
+    "height": 23,
+    "width": 24,
+    "depth": 24,
+    "legs": 3,
+    "luminaireAssemblies": 6,
+    "centralPolyhedra": 1,
+    "dimensionsSources": {
+      "ownerHeight": 23,
+      "artistDimensions": [22, 24, 24]
+    },
+    "heightInterpretation": "Owner states 23 m; artist lists 22 x 24 x 24 m. Geometry is an approximate 23 m depiction, not a measured survey.",
+    "orientationInferred": true,
+    "sourceURLs": {
+      "owner": "https://www.calgarymlc.ca/articles/new-public-art-installation-blooms-on-st-patricks-island",
+      "ownerLocation": "https://www.calgarymlc.ca/projects/st-patricks-island",
+      "artist": "https://micheldebroin.org/en/works/bloom/",
+      "officialGuidePublication": "https://calgaryartsdevelopment.com/public-art/"
+    }
+  },
+  "auditedCandidates": [
+    {
+      "title": "Guardian",
+      "artist": "Tony Stallard",
+      "cityArtId": "P2010.002.001",
+      "longitude": -114.04691484196064,
+      "latitude": 51.02848853976377,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    },
+    {
+      "title": "Luminous Crossings",
+      "artist": "Cliff Garten",
+      "cityArtId": "P2013.002.001",
+      "longitude": -114.05643613509541,
+      "latitude": 51.046298248406664,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    },
+    {
+      "title": "Luminous Crossings",
+      "artist": "Cliff Garten",
+      "cityArtId": "P2013.002.001",
+      "longitude": -114.05668779549329,
+      "latitude": 51.04630549820353,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    },
+    {
+      "title": "Luminous Crossings",
+      "artist": "Cliff Garten",
+      "cityArtId": "P2013.002.001",
+      "longitude": -114.08749198937365,
+      "latitude": 51.04719323940979,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    },
+    {
+      "title": "Luminous Crossings",
+      "artist": "Cliff Garten",
+      "cityArtId": "P2013.002.001",
+      "longitude": -114.08694764214837,
+      "latitude": 51.04716044652988,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    },
+    {
+      "title": "Chinook Arc",
+      "artist": "Joe O'Connell and Blessing Hancock with Creative Machines (Technical Consultant)",
+      "cityArtId": "P2014.001.001",
+      "longitude": -114.0837501828731,
+      "latitude": 51.0418471989877,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    },
+    {
+      "title": "Calgary Scroll",
+      "artist": "David Rokeby",
+      "cityArtId": "P2017.007.001",
+      "longitude": -114.08139312826634,
+      "latitude": 51.04485338105603,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    },
+    {
+      "title": "Below/Before/Between",
+      "artist": "Jill Anholt",
+      "cityArtId": "2022.004.001",
+      "longitude": -114.07412665687681,
+      "latitude": 51.044703597326205,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    },
+    {
+      "title": "Wishing Well",
+      "artist": "Living Lenses",
+      "cityArtId": "P2022.003.001",
+      "longitude": -114.04064553022766,
+      "latitude": 51.050788053725036,
+      "status": "audited-location-only-not-modeled",
+      "source": "https://services1.arcgis.com/AVP60cs0Q9PEA8rH/ArcGIS/rest/services/Calgary_Public_Art_Locations/FeatureServer/0"
+    }
+  ]
+}

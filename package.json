@@ -1,0 +1,23 @@
+{
+  "name": "calgary",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A playable procedural Calgary, inspired by Mr.doob's Slop New York.",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test --test-concurrency=4 test/*.test.mjs",
+    "format": "prettier --write app js build tools/bake-mapped-crossings.mjs index.html test package.json vite.config.js vercel.json AGENTS.md STYLEGUIDE.md README.md THIRD_PARTY.md",
+    "crossings:bake": "node tools/bake-mapped-crossings.mjs"
+  },
+  "dependencies": {
+    "polygon-clipping": "0.15.7",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "vite": "8.3.6"
+  }
+}

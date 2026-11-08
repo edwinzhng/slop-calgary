@@ -1,0 +1,512 @@
+{
+  "version": 1,
+  "asOf": "2026-10-30",
+  "sourceMapSha256": "5d9798a07e4f26e6363620eb7ec7d2c1ff9e1ac56f1a8eec5b7a3a4291bf6cde",
+  "mapSnapshotAt": "2026-10-29T00:11:36Z",
+  "identity": {
+    "sourceRoadId": "osm-way-127950680-0",
+    "cityBridgeId": "385.107",
+    "name": "Prince's Island Arch",
+    "basis": "Whole OSM source line intersects the exact owner footprint; close reference views agree in form and context. Not the separate north cable-stayed bridge or Jaipur Bridge."
+  },
+  "official": {
+    "source": {
+      "name": "city-bridges.json",
+      "url": "https://data.calgary.ca/resource/vchq-db2i.json?$limit=5000",
+      "status": "downloaded",
+      "sha256": "cb509b9d1f10664ad90e09f61228eb61e6cd2957ee63150a59ef7953fb93702a",
+      "bytes": 798803,
+      "etag": "W/\"Z29sZi4xNTYzOV8zMV8zODY4c01KVzl3M2FPcEdYd2cxdWhiZ2xfTmJ2Tk0---gziqQFWor0ruEnVf_5nsDImzhv7-fEA--gzip--gzip\"",
+      "lastModified": "Tue, 06 Oct 2026 13:07:25 GMT",
+      "retrievedAt": "2026-10-30T17:05:10.687429+00:00"
+    },
+    "sourceLicence": "Open Government Licence – City of Calgary",
+    "record": {
+      "bridge_no": "385.107",
+      "location": "Prince's Island Arch",
+      "length_bridge": "12.30000019",
+      "width_clear": "2.8499999",
+      "width_out_to_out": "2.8499999",
+      "in_service_date": "1979-07-01",
+      "multipolygon": "MULTIPOLYGON (((-114.07033393029508 51.05597662011597,-114.0702961239357 51.055985489639035,-114.07018237806898 51.055786538236276,-114.07022347754034 51.05577840662502,-114.07033393029508 51.05597662011597)))",
+      "status_cd_resolved": "Active"
+    },
+    "dimensionsMeaning": "Raw owner fields, not newly measured shop drawings. Clear/outside width fields are equal and do not resolve individual railing offsets. Polygon includes approaches and is not the physical span length."
+  },
+  "sourceGround": {
+    "dataset": "https://data.calgary.ca/d/eink-tu9p",
+    "asset": "6eacea69-c7bf-487e-8c2d-f16768ffcda4",
+    "archive": "Calgary_LIDAR_DEM_2022-2024_2m_split_by_ATS_Sections_csv_asc.zip",
+    "tile": "S2224015",
+    "entry": "Calgary_LIDAR_DEM_2022-2024_2m_split_by_ATS_Sections_csv_asc/ArcGrid_ASC_format/DEM_LIDAR_2022-2024_2m_S2224015.asc",
+    "entrySha256": "c232ba6260c275bb134bb39308ff06d1fcb6a8f697584ae570f1fadd856a2f0b",
+    "sourceCellsizeM": 2,
+    "sourceCrs": "EPSG:3776 NAD83 (adopted/original), Alberta 3TM 114W",
+    "verticalDatum": "CGVD28 orthometric metres, GSD95 geoid; no vertical conversion",
+    "collectionPeriod": "City 2022–2024 collection; no per-cell acquisition year asserted",
+    "licence": "Open Government Licence – City of Calgary 2.1",
+    "licenceUrl": "https://data.calgary.ca/stories/s/Open-Calgary-Terms-of-Use/u45n-7awa",
+    "attribution": "Contains information licensed under the Open Government Licence – City of Calgary.",
+    "sampling": "Bilinear from original cell-centred bare-earth DEM. Nominal horizontal transform accuracy 4 m and 2 m cells limit bank precision. Bridge-deck/rise/thickness/headroom are NOT measured by this grid."
+  },
+  "localGroundGrid": {
+    "path": "data/prince-arch-ground.bin",
+    "format": "Little-endian Float32 absolute elevations, row-major +x/east, +z/south",
+    "origin": [
+      80,
+      -1162
+    ],
+    "step": 2,
+    "width": 33,
+    "height": 41,
+    "byteLength": 5412,
+    "sha256": "9a16a5f2bc00b86f3662891d9e9155dee5700f5ecb8c38ad17bc595f093ba7af",
+    "fnv1a": 1715378322,
+    "bounds": [
+      80,
+      -1162,
+      144,
+      -1082
+    ]
+  },
+  "archBankAnchors": [
+    {
+      "point": [
+        111.1,
+        -1130.7
+      ],
+      "elevation": 1046.477928255434,
+      "easting": -4929.219431542885,
+      "northing": 5657748.685514395,
+      "aboveLowerPathGround": 2.0386091440484506
+    },
+    {
+      "point": [
+        116.2,
+        -1115.1
+      ],
+      "elevation": 1045.9711851951845,
+      "easting": -4924.119871044043,
+      "northing": 5657733.074585436,
+      "aboveLowerPathGround": 1.5318660837988318
+    }
+  ],
+  "lowerPathCrossing": {
+    "roadId": "osm-way-728793636-0",
+    "point": [
+      113.83631726417127,
+      -1122.3300883684174
+    ],
+    "elevation": 1044.4393191113857,
+    "easting": -4926.4833539324445,
+    "northing": 5657740.309738343,
+    "topology": "Distinct ground source line crosses the bridge line without a shared source node. Open paved depression is visible. Present adult clearance is unmeasured."
+  },
+  "paths": {
+    "osm-way-127950680-0": {
+      "id": "osm-way-127950680-0",
+      "kind": "footway",
+      "bridge": true,
+      "layer": 0,
+      "points": [
+        [
+          111.1,
+          -1130.7
+        ],
+        [
+          116.2,
+          -1115.1
+        ]
+      ],
+      "sourceUrl": "https://www.openstreetmap.org/way/127950680",
+      "groundSamples": [
+        {
+          "point": [
+            111.1,
+            -1130.7
+          ],
+          "elevation": 1046.477928255434,
+          "easting": -4929.219431542885,
+          "northing": 5657748.685514395
+        },
+        {
+          "point": [
+            116.2,
+            -1115.1
+          ],
+          "elevation": 1045.9711851951845,
+          "easting": -4924.119871044043,
+          "northing": 5657733.074585436
+        }
+      ]
+    },
+    "osm-way-728793636-0": {
+      "id": "osm-way-728793636-0",
+      "kind": "footway",
+      "bridge": false,
+      "layer": 0,
+      "points": [
+        [
+          18.6,
+          -1041.7
+        ],
+        [
+          33.2,
+          -1054.4
+        ],
+        [
+          42.8,
+          -1069.7
+        ],
+        [
+          49.3,
+          -1084.7
+        ],
+        [
+          54.4,
+          -1093.9
+        ],
+        [
+          81.2,
+          -1114.7
+        ],
+        [
+          95.1,
+          -1122.4
+        ],
+        [
+          121.9,
+          -1122.3
+        ]
+      ],
+      "sourceUrl": "https://www.openstreetmap.org/way/728793636",
+      "groundSamples": [
+        {
+          "point": [
+            18.6,
+            -1041.7
+          ],
+          "elevation": 1044.616698024074,
+          "easting": -5022.067908471893,
+          "northing": 5657659.740371438
+        },
+        {
+          "point": [
+            33.2,
+            -1054.4
+          ],
+          "elevation": 1044.52181001308,
+          "easting": -5007.414000200599,
+          "northing": 5657672.431078825
+        },
+        {
+          "point": [
+            42.8,
+            -1069.7
+          ],
+          "elevation": 1044.6212303952268,
+          "easting": -4997.7718655330655,
+          "northing": 5657687.727685873
+        },
+        {
+          "point": [
+            49.3,
+            -1084.7
+          ],
+          "elevation": 1044.6384260945217,
+          "easting": -4991.238882668252,
+          "northing": 5657702.727198416
+        },
+        {
+          "point": [
+            54.4,
+            -1093.9
+          ],
+          "elevation": 1044.5506992413762,
+          "easting": -4986.1155116981145,
+          "northing": 5657711.925825666
+        },
+        {
+          "point": [
+            81.2,
+            -1114.7
+          ],
+          "elevation": 1044.426287711176,
+          "easting": -4959.219459027141,
+          "northing": 5657732.708014578
+        },
+        {
+          "point": [
+            95.1,
+            -1122.4
+          ],
+          "elevation": 1044.546441668621,
+          "easting": -4945.272683998447,
+          "northing": 5657740.397634476
+        },
+        {
+          "point": [
+            121.9,
+            -1122.3
+          ],
+          "elevation": 1044.3788371529865,
+          "easting": -4918.396855534223,
+          "northing": 5657740.271930895
+        }
+      ]
+    },
+    "osm-way-127950703-0": {
+      "id": "osm-way-127950703-0",
+      "kind": "footway",
+      "bridge": false,
+      "layer": 0,
+      "points": [
+        [
+          116.2,
+          -1115.1
+        ],
+        [
+          128.6,
+          -1085.3
+        ],
+        [
+          132.8,
+          -1074.0
+        ],
+        [
+          137.5,
+          -1065.5
+        ],
+        [
+          144.6,
+          -1058.1
+        ]
+      ],
+      "sourceUrl": "https://www.openstreetmap.org/way/127950703",
+      "groundSamples": [
+        {
+          "point": [
+            116.2,
+            -1115.1
+          ],
+          "elevation": 1045.9711851951845,
+          "easting": -4924.119871044043,
+          "northing": 5657733.074585436
+        },
+        {
+          "point": [
+            128.6,
+            -1085.3
+          ],
+          "elevation": 1047.678720299774,
+          "easting": -4911.713076264953,
+          "northing": 5657703.251188009
+        },
+        {
+          "point": [
+            132.8,
+            -1074.0
+          ],
+          "elevation": 1047.9254019161347,
+          "easting": -4907.511889063641,
+          "northing": 5657691.942802359
+        },
+        {
+          "point": [
+            137.5,
+            -1065.5
+          ],
+          "elevation": 1048.1297854170234,
+          "easting": -4902.806602053805,
+          "northing": 5657683.435029974
+        },
+        {
+          "point": [
+            144.6,
+            -1058.1
+          ],
+          "elevation": 1048.181679370839,
+          "easting": -4895.69342676392,
+          "northing": 5657676.025406461
+        }
+      ]
+    },
+    "osm-way-149621639-0": {
+      "id": "osm-way-149621639-0",
+      "kind": "footway",
+      "bridge": false,
+      "layer": 0,
+      "points": [
+        [
+          77.9,
+          -1165.0
+        ],
+        [
+          98.3,
+          -1145.5
+        ],
+        [
+          103.8,
+          -1139.2
+        ],
+        [
+          111.1,
+          -1130.7
+        ]
+      ],
+      "sourceUrl": "https://www.openstreetmap.org/way/149621639",
+      "groundSamples": [
+        {
+          "point": [
+            77.9,
+            -1165.0
+          ],
+          "elevation": 1045.5590769191494,
+          "easting": -4962.480461748305,
+          "northing": 5657783.030702302
+        },
+        {
+          "point": [
+            98.3,
+            -1145.5
+          ],
+          "elevation": 1045.9824308748432,
+          "easting": -4942.041505091788,
+          "northing": 5657763.503521846
+        },
+        {
+          "point": [
+            103.8,
+            -1139.2
+          ],
+          "elevation": 1045.9874923433545,
+          "easting": -4936.531972609968,
+          "northing": 5657757.19580335
+        },
+        {
+          "point": [
+            111.1,
+            -1130.7
+          ],
+          "elevation": 1046.477928255434,
+          "easting": -4929.219431542885,
+          "northing": 5657748.685514395
+        }
+      ]
+    },
+    "osm-way-728793633-0": {
+      "id": "osm-way-728793633-0",
+      "kind": "footway",
+      "bridge": false,
+      "layer": 0,
+      "points": [
+        [
+          103.8,
+          -1139.2
+        ],
+        [
+          109.5,
+          -1144.6
+        ],
+        [
+          124.4,
+          -1170.9
+        ]
+      ],
+      "sourceUrl": "https://www.openstreetmap.org/way/728793633",
+      "groundSamples": [
+        {
+          "point": [
+            103.8,
+            -1139.2
+          ],
+          "elevation": 1045.9874923433545,
+          "easting": -4936.531972609968,
+          "northing": 5657757.19580335
+        },
+        {
+          "point": [
+            109.5,
+            -1144.6
+          ],
+          "elevation": 1046.0230938444165,
+          "easting": -4930.810685633492,
+          "northing": 5657762.592437168
+        },
+        {
+          "point": [
+            124.4,
+            -1170.9
+          ],
+          "elevation": 1045.6452104342602,
+          "easting": -4915.843495097071,
+          "northing": 5657788.888394129
+        }
+      ]
+    }
+  },
+  "photos": [
+    {
+      "pageId": "79823727",
+      "title": "File:Bridge (2342682150).jpg",
+      "creator": "Mack Male from Edmonton, AB, Canada",
+      "creatorHtml": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/24311648@N00\">Mack Male</a> from Edmonton, AB, Canada",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bridge_(2342682150).jpg",
+      "sourceSha1": "5df8909b96db921ec065657997b006bacb680fc6",
+      "captureDate": "2008-03-15 16:47",
+      "previewSha256": "93b8c59664c43e04e4a4d5ecea8a62fd9b4efded96759955dd2f883785fa19f2",
+      "bytes": 513545,
+      "path": "/park-bridge-references/prince-arch-79823727.jpg",
+      "observation": "Winter side view: paired curved timber edge girders, pale metal horizontal rails and vertical posts, concrete end/wing walls and cobble-protected banks. The large north cable-stayed bridge appears behind; it is not this small arch.",
+      "inspection": "full provider preview actually inspected",
+      "derivative": "Unmodified provider-resized JPEG; watermark retained where present",
+      "gameCompared": false,
+      "visualCompletion": false
+    },
+    {
+      "pageId": "123096232",
+      "title": "File:Alberta IMG 5214 (17150616359).jpg",
+      "creator": "Willem van Valkenburg from Delft, Netherlands",
+      "creatorHtml": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/10013573@N05\">Willem van Valkenburg</a> from Delft, Netherlands",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Alberta_IMG_5214_(17150616359).jpg",
+      "sourceSha1": "fa069cba322528c0b98e71d91f77e8595dc7d4ec",
+      "captureDate": "2015-05-01 18:53",
+      "previewSha256": "f3fa75c8ea10b4f85060e60d60da8de54b6ea14a5aae0b591a93970facebb34d",
+      "bytes": 523868,
+      "path": "/park-bridge-references/prince-arch-123096232.jpg",
+      "observation": "Opposite-side spring view: arched timber deck/girders, horizontal guard rails, concrete end walls and cobble-protected banks. The two downtown office towers provide independent orientation context. Trees obscure some structural detail.",
+      "inspection": "full provider preview actually inspected",
+      "derivative": "Unmodified provider-resized JPEG; watermark retained where present",
+      "gameCompared": false,
+      "visualCompletion": false
+    },
+    {
+      "pageId": "66194519",
+      "title": "File:Spring in Calgary 2015 (17214535298).jpg",
+      "creator": "Thank you for visiting my page from Canada",
+      "creatorHtml": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/92599451@N08\">Thank you for visiting my page</a> from Canada",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spring_in_Calgary_2015_(17214535298).jpg",
+      "sourceSha1": "4b749d426b0978bf7faba81c9c822d51e0e057eb",
+      "captureDate": "2015-05-03 10:07",
+      "previewSha256": "03d1fbe218aec5adc1d3a3b13d44629e18e705c195c3a59cfcea039b52416df7",
+      "bytes": 522394,
+      "path": "/park-bridge-references/prince-arch-66194519.jpg",
+      "observation": "Close spring side view: paved path crosses the open depression below the timber arch; concrete wing walls, metal rails, and cobble bank protection are visible. An adult beside the bank is context, not a calibrated height scale. Reported GPS corroborates identity but does not survey the bridge.",
+      "inspection": "full provider preview actually inspected",
+      "derivative": "Unmodified provider-resized JPEG; watermark retained where present",
+      "gameCompared": false,
+      "visualCompletion": false,
+      "reportedCameraLonLat": [
+        -114.070229,
+        51.055901
+      ],
+      "cameraPolicy": "Discovery/identity context only; neither surveyed camera position nor inferred scale is treated as a dimension"
+    }
+  ]
+}

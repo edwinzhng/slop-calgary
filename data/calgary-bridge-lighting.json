@@ -1,0 +1,171 @@
+{
+  "meta": {
+    "schemaVersion": 1,
+    "asOf": "2026-10-29",
+    "source": "https://data.calgary.ca/d/vkhm-h954",
+    "dataset": "vkhm-h954",
+    "license": "Open Government Licence – City of Calgary",
+    "licenseURL": "https://data.calgary.ca/d/Open-Data-Terms/u45n-7awa",
+    "sourceRowsUpdatedAt": "2026-10-06T13:07:22+00:00",
+    "sourceSHA256": "3aa166dfe16284efa5f7de7ac416cdb2dae1c47e78645a22f905acf9f9cebdbd",
+    "sourceBridge": "osm-way-921413372-0",
+    "mountingReference": "https://www.pcl.com/us/en/our-work/9th-Ave-vehicle-bridge-replacement",
+    "inspectedPhotograph": "https://www.pcl.com/content/dam/pcl-projects/project-supplementary-photos/9%20Ave%20Bridge%20Replacement%202.jpg",
+    "mountedTypes": ["SJ"],
+    "skipped": [
+      {
+        "id": "city-light-1110644941",
+        "reason": "SH under-canopy mounting surface not identified in the rendered/source geometry; height and direction unresolved."
+      }
+    ],
+    "inference": "WGS84/local XY, IDs, type, watts and colour temperature retain source values. Height, direction, fixture dimensions, five transverse support stations and simplified crossbeam section are inferred using the completed contractor photograph. Coordinates are never snapped to the beam or arch."
+  },
+  "types": {
+    "SJ": {
+      "code": "SJ",
+      "description": "SJ - 36W Bridge Wide Flood, 3000K (Erco)",
+      "category": "bridge-feature",
+      "technology": "unspecified",
+      "watts": 36,
+      "kelvin": 3000,
+      "kelvinInferred": false
+    },
+    "SH": {
+      "code": "SH",
+      "description": "SH - 46W Bridge Under Canopy, 4000K (Cree)",
+      "category": "bridge-feature",
+      "technology": "unspecified",
+      "watts": 46,
+      "kelvin": 4000,
+      "kelvinInferred": false
+    }
+  },
+  "records": [
+    {
+      "id": "city-light-1110644938",
+      "sourceId": "1110644938",
+      "x": 2048.434,
+      "z": 252.948,
+      "longitude": -114.0425982426481,
+      "latitude": 51.04352518924337,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644939",
+      "sourceId": "1110644939",
+      "x": 2030.221,
+      "z": 247.035,
+      "longitude": -114.04285877670087,
+      "latitude": 51.04357836537092,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644940",
+      "sourceId": "1110644940",
+      "x": 2031.737,
+      "z": 242.527,
+      "longitude": -114.04283708000608,
+      "latitude": 51.04361890534463,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644941",
+      "sourceId": "1110644941",
+      "x": 2015.585,
+      "z": 244.304,
+      "longitude": -114.04306812745442,
+      "latitude": 51.04360292658298,
+      "type": "SH"
+    },
+    {
+      "id": "city-light-1110644943",
+      "sourceId": "1110644943",
+      "x": 2024.135,
+      "z": 245.04,
+      "longitude": -114.04294582515979,
+      "latitude": 51.04359630210119,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644944",
+      "sourceId": "1110644944",
+      "x": 2026.956,
+      "z": 236.165,
+      "longitude": -114.04290547955614,
+      "latitude": 51.043676121495686,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644947",
+      "sourceId": "1110644947",
+      "x": 2043.699,
+      "z": 246.468,
+      "longitude": -114.04266597535394,
+      "latitude": 51.04358346027445,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644950",
+      "sourceId": "1110644950",
+      "x": 2045.22,
+      "z": 242.09,
+      "longitude": -114.04264422465496,
+      "latitude": 51.04362283426336,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644952",
+      "sourceId": "1110644952",
+      "x": 2020.582,
+      "z": 234.372,
+      "longitude": -114.04299664634053,
+      "latitude": 51.043692244345316,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644954",
+      "sourceId": "1110644954",
+      "x": 2025.635,
+      "z": 240.468,
+      "longitude": -114.04292437149087,
+      "latitude": 51.04363741914267,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644955",
+      "sourceId": "1110644955",
+      "x": 2033.2,
+      "z": 238.182,
+      "longitude": -114.04281616481697,
+      "latitude": 51.04365798419577,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644958",
+      "sourceId": "1110644958",
+      "x": 2051.299,
+      "z": 244.062,
+      "longitude": -114.04255726771208,
+      "latitude": 51.043605097746344,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644961",
+      "sourceId": "1110644961",
+      "x": 2049.785,
+      "z": 248.439,
+      "longitude": -114.0425789200922,
+      "latitude": 51.043565736394946,
+      "type": "SJ"
+    },
+    {
+      "id": "city-light-1110644962",
+      "sourceId": "1110644962",
+      "x": 2042.45,
+      "z": 251.117,
+      "longitude": -114.04268384213752,
+      "latitude": 51.043541654178334,
+      "type": "SJ"
+    }
+  ]
+}

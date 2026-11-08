@@ -1,0 +1,334 @@
+{
+  "version": 1,
+  "asOf": "2026-10-30",
+  "sourceMapSha256": "5d9798a07e4f26e6363620eb7ec7d2c1ff9e1ac56f1a8eec5b7a3a4291bf6cde",
+  "mapSnapshotAt": "2026-10-29T00:11:36Z",
+  "sourceGround": {
+    "dataset": "https://data.calgary.ca/d/eink-tu9p",
+    "asset": "6eacea69-c7bf-487e-8c2d-f16768ffcda4",
+    "archive": "Calgary_LIDAR_DEM_2022-2024_2m_split_by_ATS_Sections_csv_asc.zip",
+    "tile": "S2124015",
+    "entry": "Calgary_LIDAR_DEM_2022-2024_2m_split_by_ATS_Sections_csv_asc/ArcGrid_ASC_format/DEM_LIDAR_2022-2024_2m_S2124015.asc",
+    "sha256": "5ea13f57a6b89293eae50a38973cac4392d1dccd50ac9b4d654d12e8729174d4",
+    "cellsize": 2,
+    "sourceCrs": "EPSG:3776 NAD83 (adopted/original), Alberta 3TM 114W",
+    "verticalDatum": "CGVD28 orthometric metres, GSD95 geoid; no vertical conversion",
+    "collectionPeriod": "City 2022–2024 DEM collection; no per-cell acquisition date asserted",
+    "license": "Open Government Licence – City of Calgary 2.1",
+    "licenseUrl": "https://data.calgary.ca/stories/s/Open-Calgary-Terms-of-Use/u45n-7awa",
+    "attribution": "Contains information licensed under the Open Government Licence – City of Calgary.",
+    "sampling": "Bilinear from the cached original 2m cell-centred bare-earth grid; source bridges/stairs are not measured deck heights. Horizontal transform reports 4 m nominal accuracy. Steep banks and structures may be interpolated."
+  },
+  "anchors": {
+    "southAbutment": {
+      "sourceRoadId": "osm-way-166400806-0",
+      "point": [
+        -861.6,
+        -713.6
+      ],
+      "elevation": 1048.5303321919355,
+      "easting": -5905.150511787486,
+      "northing": 5657332.447034498,
+      "offsetFromSouthLowerStair": 1.089629317083336
+    },
+    "northAbutment": {
+      "sourceRoadId": "osm-way-166400806-0",
+      "point": [
+        -880.1,
+        -750.2
+      ],
+      "elevation": 1048.7040801305855,
+      "easting": -5923.662398932037,
+      "northing": 5657369.082449247,
+      "offsetFromSouthLowerStair": 1.2633772557333032
+    },
+    "southLowerStair": {
+      "sourceRoadId": "osm-way-422813126-0",
+      "point": [
+        -867.3,
+        -703.0
+      ],
+      "elevation": 1047.4407028748521,
+      "easting": -5910.879246817238,
+      "northing": 5657321.849469716,
+      "offsetFromSouthLowerStair": 0.0
+    },
+    "southHigherStair": {
+      "sourceRoadId": "osm-way-422813128-0",
+      "point": [
+        -860.4,
+        -706.4
+      ],
+      "elevation": 1047.7820514932423,
+      "easting": -5903.955249893782,
+      "northing": 5657325.242871487,
+      "offsetFromSouthLowerStair": 0.34134861839015684
+    },
+    "northLowerStair": {
+      "sourceRoadId": "osm-way-608738663-0",
+      "point": [
+        -865.4,
+        -746.0
+      ],
+      "elevation": 1048.4418056810819,
+      "easting": -5908.924499043889,
+      "northing": 5657364.863936548,
+      "offsetFromSouthLowerStair": 1.00110280622971
+    }
+  },
+  "southTwoStepDifferenceDiagnostic": {
+    "stepCounts": [
+      11,
+      9
+    ],
+    "groundDifference": 0.34134861839015684,
+    "differencePerStep": 0.17067430919507842,
+    "caution": "Agreement with a roughly 0.17 m riser is a modelling constraint, not a stair survey or exact measured riser dimension."
+  },
+  "mappedDeckGroundSamples": [
+    {
+      "point": [
+        -861.6,
+        -713.6
+      ],
+      "elevation": 1048.5303321919355,
+      "easting": -5905.150511787486,
+      "northing": 5657332.447034498
+    },
+    {
+      "point": [
+        -874.2,
+        -708.3
+      ],
+      "elevation": 1048.181460815613,
+      "easting": -5917.793281469357,
+      "northing": 5657327.159445086
+    },
+    {
+      "point": [
+        -881.7,
+        -702.0
+      ],
+      "elevation": 1047.786719113183,
+      "easting": -5925.322361373493,
+      "northing": 5657320.865629498
+    },
+    {
+      "point": [
+        -882.8,
+        -700.7
+      ],
+      "elevation": 1047.7159098525883,
+      "easting": -5926.427059544602,
+      "northing": 5657319.56639192
+    },
+    {
+      "point": [
+        -882.8,
+        -699.2
+      ],
+      "elevation": 1047.4406858614955,
+      "easting": -5926.42878125298,
+      "northing": 5657318.065811266
+    },
+    {
+      "point": [
+        -881.1,
+        -696.9
+      ],
+      "elevation": 1046.9422244366617,
+      "easting": -5924.726464758742,
+      "northing": 5657315.76296502
+    },
+    {
+      "point": [
+        -873.0,
+        -696.5
+      ],
+      "elevation": 1047.0517171758256,
+      "easting": -5916.603307105908,
+      "northing": 5657315.353498529
+    },
+    {
+      "point": [
+        -867.7,
+        -697.1
+      ],
+      "elevation": 1047.1300943191054,
+      "easting": -5911.287167314577,
+      "northing": 5657315.947644894
+    },
+    {
+      "point": [
+        -860.8,
+        -699.0
+      ],
+      "elevation": 1046.5466405007028,
+      "easting": -5904.364877520974,
+      "northing": 5657317.8404654395
+    },
+    {
+      "point": [
+        -851.9,
+        -703.6
+      ],
+      "elevation": 1046.964948500758,
+      "easting": -5895.433680380779,
+      "northing": 5657322.432050686
+    },
+    {
+      "point": [
+        -846.5,
+        -708.3
+      ],
+      "elevation": 1046.9492310508529,
+      "easting": -5890.012581837475,
+      "northing": 5657327.127691645
+    },
+    {
+      "point": [
+        -862.1,
+        -752.4
+      ],
+      "elevation": 1048.3549663047488,
+      "easting": -5905.607588905897,
+      "northing": 5657371.262629423
+    },
+    {
+      "point": [
+        -867.9,
+        -768.5
+      ],
+      "elevation": 1048.2882724986764,
+      "easting": -5911.406003399485,
+      "northing": 5657387.375517262
+    },
+    {
+      "point": [
+        -871.0,
+        -770.3
+      ],
+      "elevation": 1048.287608965749,
+      "easting": -5914.512936572629,
+      "northing": 5657389.179773355
+    },
+    {
+      "point": [
+        -872.6,
+        -770.3
+      ],
+      "elevation": 1048.30818388951,
+      "easting": -5916.117578652936,
+      "northing": 5657389.181611049
+    },
+    {
+      "point": [
+        -881.6,
+        -766.9
+      ],
+      "elevation": 1048.294416538151,
+      "easting": -5925.147592132765,
+      "northing": 5657385.790640853
+    },
+    {
+      "point": [
+        -884.2,
+        -764.2
+      ],
+      "elevation": 1048.2842473322885,
+      "easting": -5927.758237062672,
+      "northing": 5657383.092587276
+    },
+    {
+      "point": [
+        -884.1,
+        -760.7
+      ],
+      "elevation": 1048.3213359344143,
+      "easting": -5927.661965050745,
+      "northing": 5657379.591116984
+    },
+    {
+      "point": [
+        -880.1,
+        -750.2
+      ],
+      "elevation": 1048.7040801305855,
+      "easting": -5923.662398932037,
+      "northing": 5657369.082449247
+    }
+  ],
+  "clearance": {
+    "sourceUrl": "https://www.transportation.alberta.ca/PlanningTools/Data/Bridge/Bridge_Structure_Report.pdf",
+    "documentTitle": "Alberta Transportation Infrastructure Management System, Bridge Structures Report",
+    "documentDate": "2026-08-17",
+    "page": 703,
+    "bridgeFile": "82571-1",
+    "structure": "Pedestrian Bridge over Memorial Dr at 9A St NW Calgary",
+    "field": "Meas VCL Over",
+    "metres": 5.5,
+    "verified": "Full PDF page visually inspected, including column labels; value is not the Deck Height field. Local road datum and slab thickness remain model inferences. The report's 2012 entry is not used as an asserted construction date."
+  },
+  "bankSurfaceProfiles": [
+    {
+      "roadId": "osm-way-180764948-0",
+      "samples": [
+        {
+          "point": [
+            -839.2,
+            -720
+          ],
+          "elevation": 1048.6096278791595,
+          "offsetFromSouthLowerStair": 1.1689250036897647
+        },
+        {
+          "point": [
+            -841.5,
+            -720
+          ],
+          "elevation": 1048.6270933499336,
+          "offsetFromSouthLowerStair": 1.1863904744639058
+        },
+        {
+          "point": [
+            -853.7,
+            -715
+          ],
+          "elevation": 1048.2185869517873,
+          "offsetFromSouthLowerStair": 0.7778840763176049
+        }
+      ]
+    },
+    {
+      "roadId": "osm-way-418299513-0",
+      "samples": [
+        {
+          "point": [
+            -861.6,
+            -713.6
+          ],
+          "elevation": 1048.5303321881922,
+          "offsetFromSouthLowerStair": 1.0896293127225363
+        },
+        {
+          "point": [
+            -853.7,
+            -715
+          ],
+          "elevation": 1048.2185869517873,
+          "offsetFromSouthLowerStair": 0.7778840763176049
+        }
+      ]
+    }
+  ],
+  "bridgeBankConnections": [
+    {
+      "roadId": "osm-way-129175808-0",
+      "point": [
+        -839.2,
+        -720
+      ],
+      "profileRoadId": "osm-way-180764948-0"
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "version": 2,
+  "threeRevision": "187",
+  "meta": {
+    "description": "Exact offline output of mapped crossing paint and surveyed sidewalk curb selection; detail dimensions remain inferred.",
+    "command": "node tools/bake-mapped-crossings.mjs",
+    "sourceOrder": [
+      "road attributes",
+      "transit-only roads",
+      "mapped parks",
+      "site overlays"
+    ],
+    "sourceLicenses": [
+      "OpenStreetMap ODbL 1.0",
+      "City of Calgary Open Data Licence"
+    ],
+    "geometrySource": "app/mapped-crossings.js"
+  },
+  "layout": {
+    "byteOrder": "little-endian",
+    "vertexCount": 188072,
+    "positionByteOffset": 0,
+    "sideByteOffset": 2256864,
+    "byteLength": 6395552,
+    "indices": "deterministic 4-vertex / 6-index quads",
+    "curbs": {
+      "encoding": "source-edge-parts-v1",
+      "count": 129327,
+      "fractionCount": 2973,
+      "sourceByteOffset": 3761440,
+      "fractionByteOffset": 6347984,
+      "byteLength": 2634112
+    }
+  },
+  "binarySha256": "6aeade6081f303381b695710dad181f6032067361878f94249d1f6388ed23781",
+  "inputs": {
+    "roads": "f27cae3c44f55358a7d3b1d87dc72e6c9f35e6131c515c3a22d0e0eab3ab32dd",
+    "supportMap": "afe8fbc85e34c92f934460e52a01929b4749d718bd07c573f6cd582ce683468e",
+    "surfaces": "1406cd4ca0d6e968334a4d210c7a8fb2a7f3bb16bed6a5c60f1ac03c14b3d82a",
+    "terrainManifest": "5ad92fcf01c8ad9bec4364199b98532a21f304a8c400f1a389cfb39df37ad2e3",
+    "terrainSamples": "8570b63d769959f59fea298fc901048724f6b55f4f7e3f884640f1d521a21aaf"
+  },
+  "sources": {
+    "data/calgary.json": "5d9798a07e4f26e6363620eb7ec7d2c1ff9e1ac56f1a8eec5b7a3a4291bf6cde",
+    "data/calgary-road-attributes.json": "3a6aa1a1501570ef2f27f268f6a6f4a1bda34aba6ca0cf090ceb1cb9caac59b2",
+    "data/calgary-pathway-finishes.json": "2ec238fe40eb0dbefd709defd7a1ae012eeaeec3282c9115c0123803a4a21fe2",
+    "data/calgary-transit.json": "6b7dad6b30e817471e9101f3cba14cc99a365060634e055f4228a62b782fd83e",
+    "data/calgary-parks.json": "ca582b449c2406c4ca2dcb593d6844b754b961cb1a3135e5de2d9e9b24418d02",
+    "data/calgary-site-overlay.json": "46da4cface401e2251d1889332230d43baa143372207377537de90cc6466a1a6",
+    "data/calgary-surfaces.json": "b84a7c460abd65e88adc04c08c2e0a509efa2687c6a640092e439893998e1009",
+    "data/calgary-island-relief.json": "62606da724b0c5c3e048aa5761cec9456b064dd5c9bcebb75f67f52a724fda53",
+    "data/calgary-island-relief.bin": "e3912236f0061919aa0c037ea2d0f1f3e84615b8cee740fa4ae41ac5d29c6730",
+    "data/calgary-neighbourhood-terrain.json": "cdea756e5fa9d9bf3263195e24df56294466d3a0d0d886418b301b87099a4424",
+    "data/calgary-neighbourhood-terrain.bin": "6ef0203f6faedc7860320d88f61698f489486afa09b2f2b6bb617ebdf1de63a6",
+    "data/prince-arch-evidence.json": "a24e583bb2cb40736fcfe4c6a32c2d4e9cdb6365ef3d831014557f33664b428b",
+    "data/prince-arch-ground.bin": "9a16a5f2bc00b86f3662891d9e9155dee5700f5ecb8c38ad17bc595f093ba7af"
+  },
+  "generators": {
+    "app/baked-crossings.js": "fdceb11a11c155ce1b790bd2de49b9b78601fcc3aacf24ffe3f7837b13998f78",
+    "app/mapped-crossings.js": "fd9e6bbd72c4da38cf7883415b928bdc114aaf62746c3640bdfac93f2df2429c",
+    "app/road-attributes.js": "6e330443450d78d78da02f29f9260792ff2e3bdf38909711ec74b06a2bf2c1ac",
+    "app/pathway-finishes.js": "25559b9cac8c07a99b56792f20f9f74928118040a706995c7cf3193d76b815b3",
+    "data/calgary-pathway-finishes.json": "2ec238fe40eb0dbefd709defd7a1ae012eeaeec3282c9115c0123803a4a21fe2",
+    "app/geo.js": "f37889d19c5b7ea11d4c454c8879491a25481f99abb8c8298ea8fdd9ab4a70d8",
+    "app/infrastructure.js": "f0ff91726def8586412d58b29e7d88390741933fbf229fef358fcb9a08d09ce0",
+    "app/signal-heads.js": "a969f938c2a5753a5401f54606a14dd3d51a874de69efded81a00416ee60a201",
+    "app/static-batches.js": "a5c26cc50d6754dec1b341fdd3d8deb53fe1def4062a536095e66a8d66bcd63c",
+    "app/static-cell-draws.js": "d0107030d230e8b55f18263522516c9aa1d5df88655515b2a67d0313cf206b43",
+    "app/bridge-path.js": "26fc853add5de0f83f1928232b475f54dcb116ffceb7735465e4b41bed61043b",
+    "app/bridge-deck.js": "c3f03f23764149db45635944c131ff92ebf4163391bb77dbbbad5dfc526334aa",
+    "app/rail-guideways.js": "be03f4ecbed552d782eac689f35b96ae822f1a81f7fe190a5ba41c2d79982a6a",
+    "app/bridge-forks.js": "ef3ad62f6a26d66a164a55abf8f83cf698c4d54770972faad69fe101656a3536",
+    "app/movement-collision.js": "772afe512a5895eddfc40c4a05c7252ffec2f84238d355f3687c63030d9b392e",
+    "app/bridge-connections.js": "4e122c445f70225d52544e56d68a62ede784e0cf774eb7ddbbf53a35b8cd68d2",
+    "app/bridge-guard-finishes.js": "80be37653b68157594357b815419d7c0a4ec81c0a1530a7b65e3566b23d63447",
+    "app/north-bow-overpass.js": "debf8e2514ea34b1276e54c530d086ea8f9209f120630efca9d866ed0b15fc70",
+    "app/north-bow-access.js": "afd7dd97cb3834f0f1f9493e6bd9d6b8225f264e294ae06a4a44995fd3fa59c7",
+    "data/north-bow-overpass-evidence.json": "322246c59022316574addb2da33bdb283292b2a34ef6cc891854497b5908c328",
+    "app/bridge-access.js": "11d4a2917425f4b4a2151fd157e19412162664793353ef1f5591c94c8fd6a5c9",
+    "app/peace-surfaces.js": "22d8e507b30370a533c80e4a9e8d9e5b4c55b74534c49689360a2b2512f2753f",
+    "app/ground-surfaces.js": "9f24de22b8cd2ddc3ade9e487e2ea50295ef8dfca7dc3be4a97dce22558d8848",
+    "app/linear-polygon-geometry.js": "44a8783df71069468d7b7d53695edec222c9223253c9145e086e6b92e392257b",
+    "app/polygon-queries.js": "96a017f992e3a10c1133d04b29bf85a687cba70250549351412e608528eaec13",
+    "app/car-instances.js": "2b05f9127ec1d09f5f3071e59923cb06afe346830a2f4152a0a561ddb5990586",
+    "app/island-terrain.js": "f7c487800ff3c027346b530b6c74e0806cd50c5cad28e75b66db04da6b01afa0",
+    "app/neighbourhood-terrain.js": "141d51682d789e4714ecedc8dd23469eec549032f401ac042085a8707d9f103e",
+    "app/terrain-polygons.js": "8b8bbc08980e6711c773f344dfcb41c711a36919a761f4320fc0a83c93f47f9d",
+    "app/memorial-underpass.js": "a7849056355b7aacfe56aa89e11f47d6f97a49b49eb6b7694574bd8205c2a1e0",
+    "app/prince-arch-ground.js": "4b5388ec2c51aecafbc1d70687b48c622e712a527b377df70463d9b53493f71b",
+    "app/prince-arch.js": "6e7aa08ed88565336a75a2593f915b155c4200f9e821604d52c85ed659ef7342",
+    "app/site-overlays.js": "4bcf49a2e0e682f6dff2016bbe3bd304a9223f1f3dbc58e2162f1f902161f4b6",
+    "app/crossing-surface-context.js": "d101f29a87151dc11fc30305af4d955319e714822a3039bd4fda74e78ad2a702",
+    "app/reference-streets.js": "4a90da9a02fced14feb39e70aa37ba645b97c1f974dd7f67fbbe2207cd31802d",
+    "tools/bake-mapped-crossings.mjs": "61d59f3ca83f94b73e8ebfe8ad3583ae1eaaa705f4e67b2b49135ecbb8a2c1c5"
+  },
+  "attributes": {
+    "position": "6d0e074097e67a8ce8a1b013d008131d519d3a8b997e4619333c9fb749e24560",
+    "side": "dc9fd8304c149a71270355c5e855040eaad56c52ac155731ff89c146394456cc",
+    "normal": "d5a9877fe8eb72295ae55fcae54904a4330f06065dcdd8f288bf4d21a5ead48c",
+    "paint": "f7aae71763bf4256d5b2075198140956352c25c3cf63ddff0c9806c534acebbd",
+    "color": "6355c776e07f0f5a0f03069321fd61c23a054b943812da31d3b2a26b4e0baf0b",
+    "index": "f76d7e83b28f465ca3bcc3f6bc4b8ad0311e203b4c644b1397560054fefd5041"
+  },
+  "stats": {
+    "sourceCrossings": 3882,
+    "duplicates": 0,
+    "unmarked": 2485,
+    "unspecified": 303,
+    "surfaceOnly": 6,
+    "paintedCrossings": 1366,
+    "inferredWidths": 1391,
+    "paintQuads": 47018,
+    "conflictingMarkingTags": 4,
+    "markings": {
+      "ladder": 196,
+      "lines": 832,
+      "marked-unspecified": 303,
+      "ladder:skewed": 39,
+      "zebra": 13,
+      "lines;dots": 1,
+      "dots": 7
+    }
+  }
+}

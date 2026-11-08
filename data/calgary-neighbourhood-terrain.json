@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "source": "https://data.calgary.ca/d/eink-tu9p",
+  "sourceSha256": "d6013a46f8cdb363478c3942556ab3600fa8044c3ed76fb58be5e54bfdb89d52",
+  "sourceDatum": "CGVD28 / GSD95",
+  "license": "https://data.calgary.ca/d/u45n-7awa",
+  "method": "Resampled 2 m bare-earth LiDAR. Positive relief above the west-to-east floodplain datum, with a lowland band and shoreline/edge transitions. Game heights are relative.",
+  "origin": [
+    -2970,
+    -2660
+  ],
+  "step": 10,
+  "unit": 0.04,
+  "width": 656,
+  "height": 584,
+  "activeSamples": 165380,
+  "maximumOffset": 68.28,
+  "byteLength": 766208,
+  "sha256": "6ef0203f6faedc7860320d88f61698f489486afa09b2f2b6bb617ebdf1de63a6"
+}

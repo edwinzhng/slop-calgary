@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"
+    />
+    <meta name="theme-color" content="#121316" />
+    <meta name="description" content="Explore Calgary on foot, by car, by bike or by helicopter." />
+    <title>Slop Calgary</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/app/style.css" />
+  </head>
+  <body>
+    <svg class="icon-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <symbol id="i-walk" viewBox="0 0 24 24">
+          <circle cx="13" cy="4.4" r="2" />
+          <path
+            d="M12.3 8.2 10.8 13.8M10.8 13.8 9.2 17.2 7.2 20.5M10.8 13.8l2.4 3 1.6 3.8M12.3 8.6 9.6 10.2l-.8 2.6M12.3 8.6l2.1 2.4 2.4.8"
+          />
+        </symbol>
+        <symbol id="i-car" viewBox="0 0 24 24">
+          <path d="M9.6 4.8V3.4a.6.6 0 0 1 .6-.6h3.6a.6.6 0 0 1 .6.6v1.4" />
+          <path d="m5.2 10.5 1.4-4.1A2.2 2.2 0 0 1 8.7 4.8h6.6a2.2 2.2 0 0 1 2.1 1.6l1.4 4.1" />
+          <rect x="3" y="10.5" width="18" height="6.5" rx="2" />
+          <path d="M6 17v2.6M18 17v2.6M6.6 13.8h1.6M15.8 13.8h1.6" />
+        </symbol>
+        <symbol id="i-bike" viewBox="0 0 24 24">
+          <circle cx="5.5" cy="16.5" r="3.6" />
+          <circle cx="18.5" cy="16.5" r="3.6" />
+          <path
+            d="M5.5 16.5 9.3 9.6h6.3M11.6 16.5 9.3 9.6M11.6 16.5l4-6.9M5.5 16.5h6.1M15.6 9.6l2.9 6.9M15.6 9.6 14.8 7h2.4M8 8.4h2.8"
+          />
+        </symbol>
+        <symbol id="i-heli" viewBox="0 0 24 24">
+          <path d="M3.5 4h15M11 4v3.2" />
+          <path d="M6 12.2a5 5 0 0 1 5-5h1.6a4.4 4.4 0 0 1 4.4 4.4V15H8.8A2.8 2.8 0 0 1 6 12.2z" />
+          <path d="M17 11h4.2M21.2 8.8v4.4M7 19h10.5M9.5 15v4M15 15v4" />
+        </symbol>
+        <symbol id="i-golden" viewBox="0 0 24 24">
+          <path d="M3 17.5h18M7 17.5a5 5 0 0 1 10 0M12 5v3M5.6 9.6l2 1.6M18.4 9.6l-2 1.6M7.5 21h9" />
+        </symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="4.2" />
+          <path
+            d="M12 2.8v2.1M12 19.1v2.1M2.8 12h2.1M19.1 12h2.1M5.5 5.5 7 7M17 17l1.5 1.5M5.5 18.5 7 17M17 7l1.5-1.5"
+          />
+        </symbol>
+        <symbol id="i-twilight" viewBox="0 0 24 24">
+          <path d="M3 15.5h18M7.5 19h9M8 15.5a4 4 0 0 1 8 0M17.5 4v3.2M15.9 5.6h3.2M7 7.4v1.8M6.1 8.3h1.8" />
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24">
+          <path d="M19.5 14.6A7.8 7.8 0 0 1 9.4 4.5a7.8 7.8 0 1 0 10.1 10.1z" />
+        </symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24">
+          <path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z" />
+          <circle cx="12" cy="10" r="2.4" />
+        </symbol>
+        <symbol id="i-map" viewBox="0 0 24 24">
+          <path d="M9 4.5 3.5 6.6v13l5.5-2.1 6 2.1 5.5-2.1v-13L15 6.6 9 4.5zM9 4.5v13M15 6.6v13" />
+        </symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24">
+          <path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12z" />
+          <circle cx="12" cy="12" r="2.8" />
+        </symbol>
+        <symbol id="i-eye-off" viewBox="0 0 24 24">
+          <path
+            d="M3.5 3.5l17 17M10.6 5.6c.5-.1.9-.1 1.4-.1 6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-2.4 3.2M6.6 6.6A15.6 15.6 0 0 0 2.5 12s3.5 6.5 9.5 6.5c1.6 0 3.1-.4 4.4-1.1M9.9 9.9a2.8 2.8 0 0 0 4.2 4.2"
+          />
+        </symbol>
+        <symbol id="i-sound" viewBox="0 0 24 24">
+          <path d="m11 4-5 4H3v8h3l5 4V4ZM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14" />
+        </symbol>
+        <symbol id="i-sound-off" viewBox="0 0 24 24">
+          <path d="m11 4-5 4H3v8h3l5 4V4ZM16 9l6 6M22 9l-6 6" />
+        </symbol>
+        <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m7 9.5 5 5 5-5" /></symbol>
+        <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M14.5 6.5 9 12l5.5 5.5" /></symbol>
+        <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9.5 6.5 5.5 5.5-5.5 5.5" /></symbol>
+        <symbol id="i-camera" viewBox="0 0 24 24">
+          <rect x="2.8" y="6.5" width="12.4" height="11" rx="2.4" />
+          <path d="m15.2 10.4 6-3.4v10l-6-3.4" />
+        </symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13" /></symbol>
+        <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5.5 12h13" /></symbol>
+        <symbol id="i-locate" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="6.4" />
+          <circle cx="12" cy="12" r="1.7" fill="currentColor" />
+          <path d="M12 2.5v3.1M12 18.4v3.1M2.5 12h3.1M18.4 12h3.1" />
+        </symbol>
+        <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" /></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+          <circle cx="10.8" cy="10.8" r="6.3" />
+          <path d="m20 20-4.6-4.6" />
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11" /></symbol>
+      </defs>
+    </svg>
+    <main id="viewport" aria-label="Slop Calgary game"></main>
+    <div id="loading" role="status" aria-live="polite">
+      <div class="loader">
+        <img class="calgary-mark loader-mark" src="/favicon.svg" alt="" width="56" height="56" />
+        <div class="loader-title">Slop Calgary</div>
+        <div class="loader-track is-indeterminate"><i id="load-progress" class="loader-fill"></i></div>
+        <div id="load-status">Loading the city…</div>
+      </div>
+    </div>
+    <header id="hud-header" class="hud hud-header">
+      <div class="hud-heading">
+        <div class="brand">
+          <img class="calgary-mark" src="/favicon.svg" alt="" width="30" height="30" />
+          <h1>Slop Calgary</h1>
+        </div>
+        <span id="fps" class="debug-metrics" hidden></span>
+      </div>
+      <div id="hud-toolbar" class="panel toolbar" role="group" aria-label="Explore Calgary">
+        <button
+          id="time-menu"
+          class="tool-btn"
+          popovertarget="time-popover"
+          aria-label="Time of day, Golden hour"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-golden" /></svg>
+          <span id="time-name" class="tool-label">Golden hour</span>
+        </button>
+        <button
+          id="explore-map"
+          class="tool-btn"
+          aria-label="Teleport"
+          popovertarget="teleport-popover"
+          title="Teleport"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-pin" /></svg
+          ><span class="tool-label">Teleport</span>
+        </button>
+        <button id="open-map" class="tool-btn" aria-label="Open street map" title="Calgary street map [M]">
+          <svg class="icon" aria-hidden="true"><use href="#i-map" /></svg><span class="tool-label">Map</span>
+        </button>
+        <button
+          id="settings-btn"
+          class="tool-btn icon-only"
+          popovertarget="settings-panel"
+          title="Settings"
+          aria-label="Settings"
+        >
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 17h16M8 4v6M16 14v6" />
+          </svg>
+        </button>
+        <button
+          id="btn-toggle-hud"
+          class="tool-btn icon-only"
+          title="Clean view [H]"
+          aria-label="Hide HUD"
+          aria-pressed="false"
+        >
+          <svg class="icon icon-hide" aria-hidden="true"><use href="#i-eye" /></svg
+          ><svg class="icon icon-show" aria-hidden="true"><use href="#i-eye-off" /></svg>
+        </button>
+      </div>
+    </header>
+    <div id="time-popover" class="popover" popover aria-label="Time of day">
+      <div class="pop-title">Time of day</div>
+      <div class="time-switch" role="group" aria-label="Time of day">
+        <button
+          class="pop-item time-btn active"
+          data-time="golden"
+          aria-label="Golden hour"
+          aria-pressed="true"
+          title="Golden Hour"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-golden" /></svg><span>Golden Hour</span>
+        </button>
+        <button
+          class="pop-item time-btn"
+          data-time="day"
+          aria-label="Midday"
+          aria-pressed="false"
+          title="Midday"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-sun" /></svg><span>Midday</span>
+        </button>
+        <button
+          class="pop-item time-btn"
+          data-time="dusk"
+          aria-label="Blue hour"
+          aria-pressed="false"
+          title="Blue Hour"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-twilight" /></svg><span>Blue Hour</span>
+        </button>
+        <button
+          class="pop-item time-btn"
+          data-time="night"
+          aria-label="Night"
+          aria-pressed="false"
+          title="Night"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-moon" /></svg><span>Night</span>
+        </button>
+      </div>
+    </div>
+    <div id="teleport-popover" class="popover" popover data-side="below" aria-label="Teleport">
+      <div class="pop-title">Teleport to</div>
+      <div id="place-buttons"></div>
+    </div>
+    <div id="settings-panel" class="popover settings-panel" popover data-side="below" aria-label="Settings">
+      <div class="pop-title">Settings</div>
+      <div class="setting-row">
+        <span>Sound</span>
+        <button
+          id="sound-btn"
+          class="tool-btn icon-only"
+          title="Sound [N]"
+          aria-label="Enable sound"
+          aria-pressed="false"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-sound-off" /></svg>
+        </button>
+      </div>
+      <label class="setting-row"
+        >Quality<select id="quality">
+          <option value="performance">Performance</option>
+          <option value="balanced">Balanced</option>
+          <option value="high">High detail</option>
+        </select></label
+      >
+      <label class="setting-row"
+        >Weather<select id="weather">
+          <option value="clear">Clear</option>
+          <option value="overcast">Overcast</option>
+          <option value="fog">River fog</option>
+          <option value="rain">Rain</option>
+          <option value="snow">Snow</option>
+        </select></label
+      >
+      <label class="setting-row"
+        >Atmosphere<select id="theme">
+          <option value="calgary">Calgary</option>
+          <option value="tokyo">Tokyo neon</option>
+        </select></label
+      >
+      <label class="setting-row"
+        >Volume<input
+          id="volume"
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          value="0.65"
+          aria-label="Sound volume"
+      /></label>
+      <label class="setting-row">Landmark labels<input id="landmark-toggle" type="checkbox" /></label>
+      <button id="help-btn" class="pop-item">Controls &amp; sources<kbd>?</kbd></button>
+    </div>
+    <div class="hud hud-status">
+      <div class="hud-location">
+        <div id="route-guidance" class="panel route-guidance" hidden>
+          <button id="route-open-map" class="route-summary" aria-label="Show route on map">
+            <svg class="icon" aria-hidden="true"><use href="#i-pin" /></svg>
+            <span id="route-distance" aria-live="polite"></span>
+          </button>
+          <button id="route-clear" class="icon-btn" aria-label="Clear route">
+            <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
+          </button>
+        </div>
+        <div class="location">
+          <div class="location-signs">
+            <span id="location-name" class="street-sign">Downtown Calgary</span
+            ><span id="cross-street" class="street-sign" hidden></span>
+          </div>
+        </div>
+        <button id="minimap-open" class="panel radar" aria-label="Open Calgary street map [M]">
+          <canvas id="minimap" width="576" height="368" aria-label="Live Calgary street radar"></canvas
+          ><span class="radar-north">N</span><kbd class="radar-key">M</kbd>
+        </button>
+      </div>
+      <div class="panel gauge" aria-label="Travel speed">
+        <div class="gauge-speed"><span id="speed-value">0</span><span class="gauge-unit">km/h</span></div>
+        <span id="altitude" class="gauge-altitude"></span>
+      </div>
+    </div>
+    <div class="hud hud-bottom-center">
+      <nav class="panel mode-switch" id="mode-switch" aria-label="Travel and camera">
+        <button class="mode-btn" data-mode="walk" aria-pressed="false" title="Walk [1]">
+          <svg class="icon" aria-hidden="true"><use href="#i-walk" /></svg><span class="mode-label">Walk</span
+          ><kbd>1</kbd>
+        </button>
+        <button class="mode-btn active" data-mode="drive" aria-pressed="true" title="Drive [2]">
+          <svg class="icon" aria-hidden="true"><use href="#i-car" /></svg><span class="mode-label">Drive</span
+          ><kbd>2</kbd>
+        </button>
+        <button class="mode-btn" data-mode="cycle" aria-pressed="false" title="Cycle [3]">
+          <svg class="icon" aria-hidden="true"><use href="#i-bike" /></svg
+          ><span class="mode-label">Cycle</span><kbd>3</kbd>
+        </button>
+        <button class="mode-btn" data-mode="fly" aria-pressed="false" title="Fly [4]">
+          <svg class="icon" aria-hidden="true"><use href="#i-heli" /></svg><span class="mode-label">Fly</span
+          ><kbd>4</kbd>
+        </button>
+        <button
+          id="camera-menu"
+          class="mode-btn camera-menu"
+          popovertarget="camera-popover"
+          title="Camera [V]"
+          aria-label="Camera, Third person"
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-camera" /></svg>
+          <span class="mode-label">Camera</span>
+        </button>
+      </nav>
+    </div>
+    <div id="camera-popover" class="popover" popover data-side="above" aria-label="Camera">
+      <div class="pop-title">Camera</div>
+      <div id="camera-choices"></div>
+      <button id="tour-btn" class="pop-item" aria-pressed="false">
+        Auto-rotate<span class="switch-mark" aria-hidden="true"></span>
+      </button>
+      <div class="camera-tools" role="group" aria-label="Camera zoom">
+        <span>Zoom</span>
+        <button id="zoom-out" class="icon-btn" aria-label="Zoom camera out">
+          <svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg>
+        </button>
+        <button id="zoom-in" class="icon-btn" aria-label="Zoom camera in">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+        </button>
+      </div>
+    </div>
+    <footer class="credits hud">
+      <button id="about-btn">Sources</button><span> · </span
+      ><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a
+      ><span> · </span
+      ><a
+        href="https://data.calgary.ca/stories/s/Open-Calgary-Terms-of-Use/u45n-7awa"
+        target="_blank"
+        rel="noreferrer"
+        >City of Calgary</a
+      >
+    </footer>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div class="touch-controls" id="touch-controls" hidden>
+      <div class="joystick" id="joystick" role="group" aria-label="Movement joystick">
+        <div id="joystick-knob"></div>
+      </div>
+      <div class="alt-buttons">
+        <button id="ascend" aria-label="Jump">
+          <svg class="icon up-icon" aria-hidden="true"><use href="#i-chevron-right" /></svg
+          ><span id="up-label">Jump</span></button
+        ><button id="descend" aria-label="Brake">
+          <svg class="icon down-icon" aria-hidden="true"><use href="#i-chevron-right" /></svg
+          ><span id="down-label">Brake</span>
+        </button>
+      </div>
+    </div>
+    <dialog id="atlas" class="fullmap-modal" aria-label="Calgary street atlas">
+      <div class="fullmap-canvas-wrap">
+        <canvas id="atlas-canvas" aria-label="Interactive Calgary route and teleport map"></canvas>
+      </div>
+      <div class="fullmap-header">
+        <div class="panel fullmap-title">
+          <img class="calgary-mark" src="/favicon.svg" alt="" width="30" height="30" />
+          <div>
+            <h2>Calgary Street Atlas</h2>
+            <p id="atlas-location" class="fullmap-subtitle">Downtown &amp; both rivers</p>
+          </div>
+        </div>
+        <label class="panel fullmap-search-wrap"
+          ><svg class="icon" aria-hidden="true"><use href="#i-search" /></svg
+          ><input
+            id="map-search"
+            class="fullmap-search"
+            placeholder="Search Calgary"
+            aria-label="Search streets, businesses and landmarks"
+            autocomplete="off" /></label
+        ><button class="panel tool-btn fullmap-close close" aria-label="Close map">
+          <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg
+          ><span class="tool-label">Close</span><kbd>Esc</kbd>
+        </button>
+      </div>
+      <div id="map-results" class="panel fullmap-results" hidden></div>
+      <section id="map-destination" class="panel map-destination" aria-label="Selected destination" hidden>
+        <div class="destination-heading">
+          <strong id="destination-name">Destination</strong>
+          <button id="destination-close" class="icon-btn" aria-label="Dismiss destination">
+            <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
+          </button>
+        </div>
+        <div class="destination-actions">
+          <button id="destination-route" class="route-action">Route here</button>
+          <button id="destination-teleport">Teleport</button>
+        </div>
+      </section>
+      <div class="map-controls">
+        <div class="panel map-compass">
+          <svg viewBox="0 0 44 44" aria-hidden="true">
+            <path d="M22 9.5 25.6 22h-7.2z" fill="#f05a4f" />
+            <path d="M22 34.5 25.6 22h-7.2z" fill="#f6f5f2" />
+            <text x="22" y="8" text-anchor="middle">N</text>
+          </svg>
+        </div>
+        <div class="panel map-zoom">
+          <button id="map-zoom-in" class="icon-btn" aria-label="Zoom map in">
+            <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></button
+          ><button id="map-zoom-out" class="icon-btn" aria-label="Zoom map out">
+            <svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg>
+          </button>
+        </div>
+        <div class="panel map-zoom">
+          <button id="map-center-player" class="icon-btn" aria-label="Center map on player">
+            <svg class="icon" aria-hidden="true"><use href="#i-locate" /></svg></button
+          ><button id="map-view-all" class="icon-btn" aria-label="Fit all of Calgary">
+            <svg class="icon" aria-hidden="true"><use href="#i-fit" /></svg>
+          </button>
+        </div>
+      </div>
+      <div class="fullmap-footer">
+        <div id="map-status" class="panel fullmap-status">Search or tap a destination</div>
+        <button id="map-clear-route" class="panel icon-btn" aria-label="Clear route" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+      </div>
+    </dialog>
+    <dialog id="help" class="help-dialog">
+      <div class="dialog-head">
+        <h2>Controls &amp; sources</h2>
+        <button class="icon-btn close" aria-label="Close help">
+          <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <div class="help-content">
+        <dl>
+          <dt>WASD / arrows</dt>
+          <dd>Move and steer</dd>
+          <dt>Shift / Space</dt>
+          <dd>Sprint / jump on foot; boost / brake in vehicles</dd>
+          <dt>Drag / scroll</dt>
+          <dd>Look / zoom</dd>
+          <dt>1 · 2 · 3 · 4</dt>
+          <dd>Walk · drive · cycle · fly</dd>
+          <dt>V / 5 · 6 · 7</dt>
+          <dd>Cycle cameras / chase · action · first person</dd>
+          <dt>8 · 9 · 0</dt>
+          <dd>Scenic cameras</dd>
+          <dt>E / Q</dt>
+          <dd>Fly up / down</dd>
+          <dt>M / N / H</dt>
+          <dd>Map / sound / clean view</dd>
+        </dl>
+        <p id="data-stats" class="stats"></p>
+        <p>
+          Measured City roof and wall geometry is combined with current mapped footprints, modeled landmarks
+          and approximate facade materials. Terrain is simplified. Business names are mapped data; storefront
+          designs are approximations. Dated photographs inform selected wall finishes and signs. Their
+          creators, capture dates and licenses are listed in Façade references.
+        </p>
+        <p class="attribution">
+          Based on
+          <a href="https://github.com/mrdoob/slop-newyork" target="_blank" rel="noreferrer"
+            >Mr.doob’s Slop New York</a
+          >
+          (MIT). Map data ©
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer"
+            >OpenStreetMap contributors</a
+          >
+          (ODbL). Contains information licensed under the
+          <a
+            href="https://data.calgary.ca/stories/s/Open-Calgary-Terms-of-Use/u45n-7awa"
+            target="_blank"
+            rel="noreferrer"
+            >Open Government Licence – City of Calgary</a
+          >. Contains information licensed under the
+          <a href="https://open.canada.ca/en/open-government-licence-canada" target="_blank" rel="noreferrer"
+            >Open Government Licence – Canada</a
+          >. CanElevation point clouds © Airborne Imaging Inc.
+        </p>
+      </div>
+    </dialog>
+    <script type="module" src="/app/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "meta": {
+    "status": "source-reviewed-activation-prep",
+    "sourceCheckpoint": "e0aa074",
+    "sourceNotes": "SIMMONS_FACADE_DRAFT.md",
+    "boundsPrecision": "Architectural photo correspondence, not surveyed window dimensions. Source shell and all collisions remain unchanged.",
+    "images": [
+      "commons-79822844",
+      "commons-79822857"
+    ],
+    "glassDefault": false
+  },
+  "sourceGeometry": {
+    "buildingId": "city-outline-28650-0",
+    "structureId": 1004229,
+    "sourceRecordDate": "2013-06-10",
+    "sourceDateMeaning": "City DATE_ record, not independently verified acquisition date",
+    "sourceUrl": "https://data.calgary.ca/Base-Maps/3D-Buildings-Citywide/cchr-krqg",
+    "ground": 1043.115,
+    "positionCount": 528,
+    "payloadSha256": "c768002987d3348c1bf1a84b3584fd695e040ed12743f0203a36bb6bb509d123",
+    "positionSha256": "a2d6880de3ee4f8bea2bc82cf7f1df58251f3e3c41da38afcc773278ed105e85",
+    "normalSha256": "f20d613b20d7587efc4af00b892fd74186c110426b337c2761f981933e77782b",
+    "positionFNV32": 582512268,
+    "normalFNV32": 3208821673,
+    "measuredMainParapetM": [
+      8.74,
+      8.8
+    ],
+    "measuredMaximumRooftopM": 12.28,
+    "preserved": true
+  },
+  "planes": [
+    {
+      "id": "north",
+      "a": [
+        1563.05,
+        -250.25
+      ],
+      "b": [
+        1540.83,
+        -256.39
+      ],
+      "top": [
+        8.8,
+        8.76
+      ],
+      "sourceTriangles": [
+        22,
+        23
+      ]
+    },
+    {
+      "id": "south",
+      "a": [
+        1531.95,
+        -223.99
+      ],
+      "b": [
+        1552.77,
+        -218.27
+      ],
+      "top": [
+        8.78,
+        8.78
+      ],
+      "sourceTriangles": [
+        42,
+        43
+      ]
+    }
+  ],
+  "style": {
+    "frameM": 0.055,
+    "barM": 0.025,
+    "centerM": 0.065,
+    "transomFraction": 0.29,
+    "frameColor": "#3f4936",
+    "lintelColor": "#b0b1a0",
+    "sillColor": "#775342",
+    "glassColor": "#42545b",
+    "colorPrecision": "Approximate photo-observed palette under uncontrolled daylight, not calibrated paint or reflectance measurements.",
+    "depthPrecision": "Surface-mounted render profiles0.025–0.18m are inferred visual thicknesses, not surveyed frame/recess depths. No wall holes or new collision are introduced.",
+    "photoIntegration": "If photographic upper-wall decals are used, frame/sill geometry is optional. Glass batches may be omitted to retain photographed reflections; do not stack two alternative photo variants.",
+    "paneProportionPrecision": "The transom occupies an approximate29% of the opening height, based on the photographed frame proportions; rail thickness and subdivision positions are authored estimates, not a measured joinery drawing."
+  },
+  "windows": [
+    {
+      "id": "north-2",
+      "planeId": "north",
+      "imageId": "commons-79822844",
+      "u0": 5.979146667006542,
+      "u1": 7.600580503588494,
+      "top": 6.898103725012048,
+      "bottom": 5.390270500709502,
+      "transomY": 6.46083208996431,
+      "width": 1.6214338365819527,
+      "height": 1.5078332243025452,
+      "fitResidualM": 0.011783604334705267,
+      "panes": 16,
+      "photographOcclusions": "Fine bare branches cross parts of the sash; bounds and paired pattern are visible.",
+      "metricPrecision": "Architectural correspondence estimate; not surveyed window dimensions."
+    },
+    {
+      "id": "north-3",
+      "planeId": "north",
+      "imageId": "commons-79822844",
+      "u0": 10.160990891813908,
+      "u1": 11.922618160583196,
+      "top": 6.909251786398219,
+      "bottom": 5.326867275255363,
+      "transomY": 6.450360278166791,
+      "width": 1.7616272687692884,
+      "height": 1.5823845111428554,
+      "fitResidualM": 0.026501021854611465,
+      "panes": 16,
+      "photographOcclusions": "Fine bare branches cross the lower sash; bounds are visible.",
+      "metricPrecision": "Architectural correspondence estimate; not surveyed window dimensions."
+    },
+    {
+      "id": "north-4",
+      "planeId": "north",
+      "imageId": "commons-79822844",
+      "u0": 14.453903198476924,
+      "u1": 16.19345447856088,
+      "top": 6.8953879045355535,
+      "bottom": 5.282937647634848,
+      "transomY": 6.427777330034349,
+      "width": 1.7395512800839565,
+      "height": 1.612450256900705,
+      "fitResidualM": 0.02733651398137454,
+      "panes": 16,
+      "photographOcclusions": "Thin bare branches; source retains these occlusions.",
+      "metricPrecision": "Architectural correspondence estimate; not surveyed window dimensions."
+    },
+    {
+      "id": "north-5",
+      "planeId": "north",
+      "imageId": "commons-79822844",
+      "u0": 19.220204924172204,
+      "u1": 21.11143909276388,
+      "top": 6.897235902704171,
+      "bottom": 5.256257203499401,
+      "transomY": 6.421352079934788,
+      "width": 1.8912341685916765,
+      "height": 1.6409786992047701,
+      "fitResidualM": 0.01727437705082213,
+      "panes": 16,
+      "photographOcclusions": "A fine branch crosses the lower-right frame; full-resolution crop resolves the paired 6+2 pattern.",
+      "metricPrecision": "Architectural correspondence estimate; not surveyed window dimensions."
+    },
+    {
+      "id": "south-1",
+      "planeId": "south",
+      "imageId": "commons-79822857",
+      "u0": 2.014386522435116,
+      "u1": 3.918186595603646,
+      "top": 6.906662813287509,
+      "bottom": 5.438475435949927,
+      "transomY": 6.48088847385961,
+      "width": 1.9038000731685298,
+      "height": 1.468187377337582,
+      "fitResidualM": 0.007460130654322938,
+      "panes": 16,
+      "photographOcclusions": "Mostly unobstructed. Full-resolution source shows two columns and three rows below the transom, two transom panes per leaf.",
+      "metricPrecision": "Architectural correspondence estimate; not surveyed window dimensions."
+    },
+    {
+      "id": "south-2",
+      "planeId": "south",
+      "imageId": "commons-79822857",
+      "u0": 6.96073566179073,
+      "u1": 8.89358830979548,
+      "top": 6.889216631596934,
+      "bottom": 5.444511164721596,
+      "transomY": 6.470252046203086,
+      "width": 1.932852648004749,
+      "height": 1.4447054668753383,
+      "fitResidualM": 0.005029685947166129,
+      "panes": 16,
+      "photographOcclusions": "Mostly unobstructed; full perimeter visible.",
+      "metricPrecision": "Architectural correspondence estimate; not surveyed window dimensions."
+    },
+    {
+      "id": "south-4",
+      "planeId": "south",
+      "imageId": "commons-79822857",
+      "u0": 15.834975302650225,
+      "u1": 17.52778539314479,
+      "top": 6.904175864058223,
+      "bottom": 5.585300767902423,
+      "transomY": 6.521702086173041,
+      "width": 1.6928100904945644,
+      "height": 1.3188750961558,
+      "fitResidualM": 0.036392041647228986,
+      "panes": 16,
+      "photographOcclusions": "Mostly unobstructed; a thin branch is retained. Skips the neighbouring lamp-obscured sash.",
+      "metricPrecision": "Architectural correspondence estimate; not surveyed window dimensions."
+    }
+  ]
+}

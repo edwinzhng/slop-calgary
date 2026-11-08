@@ -1,0 +1,36 @@
+.photo-credits {
+  width: min(690px, calc(100vw - 32px));
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  padding: 30px;
+  color: #303c36;
+  background: #efeee5;
+  border: 1px solid #cbcaba;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+.photo-credits h2 {
+  margin: 0 32px 18px 0;
+  font-size: 23px;
+  font-weight: 500;
+}
+.photo-credits p,
+.photo-credits li {
+  font: 13px/1.6 sans-serif;
+  letter-spacing: normal;
+}
+.photo-credits ol {
+  padding-left: 20px;
+}
+.photo-credits li {
+  margin: 14px 0;
+}
+.photo-credits a {
+  color: #465c4d;
+  text-decoration: underline;
+}
+.photo-credits .close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+}
