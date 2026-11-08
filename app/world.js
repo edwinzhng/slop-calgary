@@ -936,10 +936,12 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
       group.groundPlacements.push({ id: b.id, start: group.vertexCount, count, placement });
       group.vertexCount += count;
     }
-    groups.get(key).geos.push(g);
+    const group = groups.get(key);
+    group.geos.push(g);
+    if (height >= 45) group.skyline = true;
     if (meshRecord && geometrySource === enrichment.partialBuildings) partialCompoundsRendered.add(b.id);
     if (!meshRecord && !clippedForRail)
-      groups.get(key).definitions.push({
+      group.definitions.push({
         b: { ...b, height },
         profile,
         ...(placement ? { groundPlacement: placement } : {}),
@@ -966,6 +968,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
       mesh: m,
       x: group.x,
       z: group.z,
+      skyline: group.skyline === true,
       definitions: group.definitions,
       detail: null,
       ...(buildingGround ? { groundPlacements: group.groundPlacements } : {}),
@@ -1316,6 +1319,32 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
       return;
     }
   }
+  // These populations have different movement thresholds. Updating them in
+  // separate frames prevents crossing several thresholds from causing one hitch.
+  const regionalUpdates = [
+    ['vegetation', (camera, quality) => vegetation.update(camera, quality)],
+    ['infrastructure', (camera, quality, deferred) => infrastructure.update(camera, quality, deferred)],
+    ['parking', (camera, quality) => groundSurfaces.update(camera, quality)],
+    [
+      'regionalProps',
+      (camera, quality) => {
+        const mobile = enrichment.touchGraphics && quality === 'performance';
+        landBridgeMeshes?.update(camera.position);
+        sunnysideBarrier.update(camera, quality);
+        parks?.update(camera, quality);
+        parkStructures.update(camera, quality);
+        parkArt.update(camera, quality);
+        surveyedLighting?.update(camera, mobile ? 'low' : quality);
+        streetLightWash.update(camera);
+        streetDetails?.update(camera, quality);
+        northBowOverpass?.update(camera);
+        princeArch?.update(camera, quality);
+      },
+    ],
+  ];
+  let nextRegionalUpdate = regionalUpdates.length,
+    regionalCamera,
+    regionalQuality;
   const world = {
     data,
     authoredStorefrontBuildingIds: neighborhoods.authoredStorefrontBuildingIds,
@@ -1471,7 +1500,14 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
       skywalks: infrastructure.stats.skywalks,
       crossings: infrastructure.stats.crossings,
     },
-    updateLocalDetails() {
+    updateLocalDetails(profiler) {
+      if (nextRegionalUpdate < regionalUpdates.length) {
+        const [name, update] = regionalUpdates[nextRegionalUpdate++];
+        const stamp = profiler?.stamp();
+        update(regionalCamera, regionalQuality, true);
+        profiler?.end(name, stamp);
+        return;
+      }
       detailWorker ??= createDetailWorker();
       world.stats.detailWorker = detailWorker.stats;
       if (!infrastructure.updateNextDetail(detailWorker)) updateNextRoof(detailWorker);
@@ -1479,13 +1515,16 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
     update(camera, quality = 'balanced', { deferDetails = false } = {}) {
       const mobile = enrichment.touchGraphics && quality === 'performance';
       const max = quality === 'high' ? 6500 : mobile ? 3600 : 4800;
+      // Tall buildings remain visible at the previous skyline distance.
+      const localBuildings = camera.position.y > 160 ? 2350 : camera.position.y > 30 ? 1850 : 1500;
       for (const c of chunks) {
         const d = Math.hypot(c.x - camera.position.x, c.z - camera.position.z);
+        const visible = d < (mobile && !c.skyline ? localBuildings : max);
         if (c.batchIndex === undefined) {
-          c.mesh.visible = d < max;
+          c.mesh.visible = visible;
           c.mesh.castShadow = !mobile && d < 650;
         } else {
-          setStaticBatchPartVisible(c.mesh, c.batchIndex, d < max);
+          setStaticBatchPartVisible(c.mesh, c.batchIndex, visible);
           setStaticBatchPartShadowVisible(c.mesh, c.batchIndex, !mobile && d < 650);
         }
       }
@@ -1510,19 +1549,10 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
           c.detail = null;
         }
       }
-      vegetation.update(camera, quality);
-      infrastructure.update(camera, quality, deferDetails);
-      landBridgeMeshes?.update(camera.position);
-      sunnysideBarrier.update(camera, quality);
-      groundSurfaces.update(camera, quality);
-      parks?.update(camera, quality);
-      parkStructures.update(camera, quality);
-      parkArt.update(camera, quality);
-      surveyedLighting?.update(camera, mobile ? 'low' : quality);
-      streetLightWash.update(camera);
-      streetDetails?.update(camera, quality);
-      northBowOverpass?.update(camera);
-      princeArch?.update(camera, quality);
+      regionalCamera = camera;
+      regionalQuality = quality;
+      nextRegionalUpdate = deferDetails ? 0 : regionalUpdates.length;
+      if (!deferDetails) for (const [, update] of regionalUpdates) update(camera, quality, false);
     },
   };
   world.walkSupportHeight = createWalkingSupport({

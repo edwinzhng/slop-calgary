@@ -681,6 +681,10 @@ async function init() {
     elapsed = 0,
     gpuTimer = 0,
     resolvingGpu = false;
+  document.addEventListener('visibilitychange', () => {
+    last = performance.now();
+    resolution.update(0);
+  });
   renderer.setAnimationLoop(() => {
     const now = performance.now(),
       raw = now - last;
@@ -726,7 +730,7 @@ async function init() {
       profiler.end('facades', stamp);
     } else if (!ui.isMapOpen()) {
       stamp = profiler.stamp();
-      world.updateLocalDetails();
+      world.updateLocalDetails(profiler);
       profiler.end('localGeometry', stamp);
     }
     stamp = profiler.stamp();
@@ -838,7 +842,7 @@ async function init() {
     ui.update(now);
     profiler.end('hud', stamp);
     profiler.end('cpuFrame', cpuStart);
-    if (raw < 250) profiler.add('frameInterval', raw);
+    profiler.add('frameInterval', raw);
   });
   addEventListener('resize', () => {
     camera.aspect = innerWidth / innerHeight;

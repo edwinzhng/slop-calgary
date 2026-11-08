@@ -4,7 +4,27 @@
 import { DoubleSide, Frustum, Matrix4 } from 'three/webgpu';
 import { prepareSceneBounds } from './static-bounds.js';
 
-export async function compileSceneShaders(renderer, scene, camera, { concurrency = 16, onProgress } = {}) {
+function warmupVariant(object) {
+  if (!object.isMesh || object.isSkinnedMesh || object.isBatchedMesh || Array.isArray(object.material))
+    return;
+  const { geometry } = object;
+  if (!geometry.attributes.position || Object.keys(geometry.morphAttributes).length) return;
+  const layout = Object.keys(geometry.attributes)
+    .sort()
+    .map((name) => {
+      const attribute = geometry.attributes[name];
+      return `${name}:${attribute.itemSize}:${attribute.normalized}`;
+    })
+    .join(',');
+  return `${object.material.id}/${object.type}/${object.receiveShadow}/${!!object.instanceColor}/${layout}`;
+}
+
+export async function compileSceneShaders(
+  renderer,
+  scene,
+  camera,
+  { concurrency = 16, onProgress, prewarmOffscreen = false } = {},
+) {
   // Three otherwise walks and updates the entire city's matrices again for
   // every individual job. Match its camera culling before queuing those jobs.
   scene.updateMatrixWorld(true);
@@ -17,7 +37,21 @@ export async function compileSceneShaders(renderer, scene, camera, { concurrency
   const prepareBounds = prepareSceneBounds(scene),
     jobs = [],
     byMaterial = new Map(),
+    visibleVariants = new Set(),
+    offscreenVariants = new Map(),
     deferredMaterials = new Set();
+  function enqueue(object) {
+    if (object.isInstancedMesh || Array.isArray(object.material)) jobs.push([object]);
+    else {
+      let job = byMaterial.get(object.material);
+      if (!job) {
+        job = [];
+        byMaterial.set(object.material, job);
+        jobs.push(job);
+      }
+      job.push(object);
+    }
+  }
   scene.traverseVisible((object) => {
     if (!(object.isMesh || object.isLine || object.isPoints || object.isSprite)) return;
     if (!object.layers.test(camera.layers)) return;
@@ -34,22 +68,28 @@ export async function compileSceneShaders(renderer, scene, camera, { concurrency
     }
     if (object.isInstancedMesh && object.count === 0) return;
     if (object.frustumCulled) prepareBounds(object);
+    const variant = prewarmOffscreen ? warmupVariant(object) : undefined;
     if (
       object.frustumCulled &&
       !(object.isSprite ? frustum.intersectsSprite(object) : frustum.intersectsObject(object))
-    )
-      return;
-    if (object.isInstancedMesh || Array.isArray(object.material)) jobs.push([object]);
-    else {
-      let job = byMaterial.get(object.material);
-      if (!job) {
-        job = [];
-        byMaterial.set(object.material, job);
-        jobs.push(job);
+    ) {
+      if (variant !== undefined && !visibleVariants.has(variant)) {
+        const other = offscreenVariants.get(variant);
+        if (!other || object.geometry.attributes.position.count < other.geometry.attributes.position.count)
+          offscreenVariants.set(variant, object);
       }
-      job.push(object);
+      return;
     }
+    if (variant !== undefined) {
+      visibleVariants.add(variant);
+      offscreenVariants.delete(variant);
+    }
+    enqueue(object);
   });
+  // WebGL links a missing program synchronously on the first live draw.
+  // Precompile one small mesh for each variant absent from the initial view.
+  const offscreen = new Set(offscreenVariants.values());
+  for (const object of offscreen) enqueue(object);
   const nextTask = () =>
     globalThis.scheduler?.yield
       ? globalThis.scheduler.yield()
@@ -63,7 +103,13 @@ export async function compileSceneShaders(renderer, scene, camera, { concurrency
       try {
         for (const object of job) {
           await nextTask();
-          await renderer.compileAsync(object, camera, scene);
+          const force = offscreen.has(object);
+          if (force) object.frustumCulled = false;
+          try {
+            await renderer.compileAsync(object, camera, scene);
+          } finally {
+            if (force) object.frustumCulled = true;
+          }
         }
         completed++;
         onProgress?.({ completed, total: jobs.length });

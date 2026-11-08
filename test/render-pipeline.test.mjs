@@ -5,24 +5,30 @@ import { context, mrt, output } from 'three/tsl';
 import { createCityPipeline } from '../app/render-pipeline.js';
 import { createMobileResolutionBudget } from '../app/render-stability.js';
 
-test('mobile resolution steps down after sustained slow frames and recovers with hysteresis', () => {
+test('adaptive resolution responds to sustained slow frames and recovers with hysteresis', () => {
   const budget = createMobileResolutionBudget();
-  for (let frame = 0; frame < 30; frame++) budget.update(28);
+  for (let frame = 0; frame < 100; frame++) budget.update(frame % 30 === 0 ? 150 : 16);
   assert.equal(budget.scale, 1);
+  budget.update(0);
+  for (let frame = 0; frame < 20; frame++) budget.update(28);
   budget.update(1500);
-  for (let frame = 0; frame < 30; frame++) budget.update(28);
+  for (let frame = 0; frame < 20; frame++) budget.update(28);
   assert.equal(budget.scale, 1, 'a suspended frame clears the current sampling window');
   budget.update(0);
-  for (let frame = 0; frame < 34; frame++) budget.update(30);
-  assert.equal(budget.scale, 0.86);
-  for (let frame = 0; frame < 34; frame++) budget.update(30);
-  assert.equal(budget.scale, 0.74);
-  for (let frame = 0; frame < 400; frame++) budget.update(16);
-  assert.equal(budget.scale, 0.74);
-  for (let frame = 0; frame < 10; frame++) budget.update(16);
-  assert.equal(budget.scale, 0.86);
-  for (let frame = 0; frame < 410; frame++) budget.update(16);
-  assert.equal(budget.scale, 1);
+  for (const scale of [0.86, 0.74, 0.62]) {
+    for (let frame = 0; frame < 30; frame++) budget.update(22);
+    assert.equal(budget.scale, scale);
+  }
+  for (const [before, after] of [
+    [0.62, 0.74],
+    [0.74, 0.86],
+    [0.86, 1],
+  ]) {
+    for (let frame = 0; frame < 562; frame++) budget.update(16);
+    assert.equal(budget.scale, before);
+    assert.equal(budget.update(16), true);
+    assert.equal(budget.scale, after);
+  }
 });
 
 function gpuFixture(t) {

@@ -15,7 +15,7 @@ export function renderPixelRatio(width, height, dpr, quality) {
 }
 
 export function createMobileResolutionBudget() {
-  const scales = [1, 0.86, 0.74];
+  const scales = [1, 0.86, 0.74, 0.62];
   let level = 0,
     slow = 0,
     healthy = 0;
@@ -24,14 +24,14 @@ export function createMobileResolutionBudget() {
       return scales[level];
     },
     update(ms) {
-      if (!(ms > 0 && ms < 120)) {
+      if (!(ms > 0 && ms < 250)) {
         slow = healthy = 0;
         return false;
       }
-      slow = ms > 23 ? slow + ms : Math.max(0, slow - ms * 0.5);
-      healthy = ms < 19 ? healthy + ms : 0;
-      if (slow > 1000 && level < scales.length - 1) level++;
-      else if (healthy > 6500 && level > 0) level--;
+      slow = ms > 20 ? slow + ms : Math.max(0, slow - ms * 0.35);
+      healthy = ms < 18 ? healthy + ms : 0;
+      if (slow > 650 && level < scales.length - 1) level++;
+      else if (healthy > 9000 && level > 0) level--;
       else return false;
       slow = healthy = 0;
       return true;

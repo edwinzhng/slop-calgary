@@ -31,7 +31,10 @@ export function createCityPipeline(renderer, scene, camera, quality = 'balanced'
             if (material?.mrtNode) material.mrtNode = null;
           }
         });
-        return compileSceneShaders(renderer, scene, camera, { onProgress });
+        return compileSceneShaders(renderer, scene, camera, {
+          onProgress,
+          prewarmOffscreen: !renderer.backend.isWebGPUBackend,
+        });
       },
       setQuality() {},
       setTime() {},

@@ -237,8 +237,10 @@ export function treeBoundsExpansion(mesh) {
     bark = [];
   if (tree) {
     for (let i = 0; i < position.count; i++) {
-      if (tree.getX(i) !== 1) bark.push(i);
+      const weight = 1 - tree.getX(i);
+      if (weight) bark.push({ x: position.getX(i), y: position.getY(i), z: position.getZ(i), weight });
     }
+    bark.sort((a, b) => a.y - b.y);
   }
   const windPadding = treeWindBoundsPadding(mesh.geometry);
   const expandInstanceBounds = mesh.geometry.attributes.aTreeShape
@@ -246,13 +248,14 @@ export function treeBoundsExpansion(mesh) {
         const shape = owner.geometry.attributes.aTreeShape,
           correction = shape.getX(slot),
           vertical = shape.getY(slot);
-        for (const vertex of bark) {
-          const t = Math.max(0, Math.min(1, (position.getY(vertex) * vertical - 1.8) / 1.4)),
-            low = (1 - tree.getX(vertex)) * (1 - t * t * (3 - 2 * t)),
-            scale = 1 + (correction - 1) * low;
-          point
-            .set(position.getX(vertex) * scale, position.getY(vertex), position.getZ(vertex) * scale)
-            .applyMatrix4(matrix);
+        if (correction === 1) return;
+        for (const { x, y, z, weight } of bark) {
+          const t = Math.max(0, (y * vertical - 1.8) / 1.4);
+          // The shader only corrects low bark. Higher branches already fit
+          // inside the transformed model bounds.
+          if (t >= 1) break;
+          const scale = 1 + (correction - 1) * (weight * (1 - t * t * (3 - 2 * t)));
+          point.set(x * scale, y, z * scale).applyMatrix4(matrix);
           bounds.expandByPoint(point);
         }
       }

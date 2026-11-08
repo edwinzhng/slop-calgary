@@ -48,6 +48,7 @@ export function createPerformanceMonitor({
           calls: stage.count,
           median: round(values[Math.floor(count * 0.5)] || 0),
           p95: round(values[Math.min(count - 1, Math.floor(count * 0.95))] || 0),
+          p99: round(values[Math.min(count - 1, Math.floor(count * 0.99))] || 0),
           max: round(values.at(-1) || 0),
           mean: round(values.reduce((sum, value) => sum + value, 0) / (count || 1)),
           over16ms: values.filter((value) => value > 16.7).length,

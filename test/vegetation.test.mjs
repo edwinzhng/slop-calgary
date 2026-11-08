@@ -330,14 +330,11 @@ for (const indirectCells of [false, true])
       ];
     for (const mesh of meshes) {
       if (!mesh.geometry.attributes.aTreeShape) continue;
-      const position = mesh.geometry.attributes.position,
-        tree = mesh.geometry.attributes.aTree,
-        getX = position.getX,
-        probe = { reads: 0, vertices: 0, records: new Set() };
-      for (let i = 0; i < position.count; i++) if (tree.getX(i) !== 1) probe.vertices++;
-      position.getX = function (i) {
+      const getMatrixAt = mesh.getMatrixAt,
+        probe = { reads: 0, records: new Set() };
+      mesh.getMatrixAt = function (i, matrix) {
         probe.reads++;
-        return getX.call(this, i);
+        return getMatrixAt.call(this, i, matrix);
       };
       barkReads.set(mesh, probe);
     }
@@ -379,7 +376,7 @@ for (const indirectCells of [false, true])
           const firstSelections = expected.pools.get(mesh).filter(({ record }) => !probe.records.has(record));
           assert.equal(
             probe.reads - beforeBark.get(mesh),
-            indirectCells ? firstSelections.length * probe.vertices : 0,
+            indirectCells ? firstSelections.length : 0,
             `${mesh.name}: bark bounds are derived once per exact record and LOD, with no direct-path work`,
           );
           for (const { record } of firstSelections) probe.records.add(record);

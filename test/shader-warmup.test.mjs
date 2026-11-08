@@ -12,12 +12,17 @@ test('shader jobs overlap independent materials while serializing a shared mater
     meshes = [new THREE.Mesh(geometry, a), new THREE.Mesh(geometry, a), new THREE.Mesh(geometry, b)],
     hidden = new THREE.Group(),
     behind = new THREE.Mesh(geometry, b),
+    landmark = new THREE.Mesh(geometry, b),
+    duplicate = new THREE.Mesh(geometry, b),
     empty = new THREE.InstancedMesh(geometry, a, 1);
   behind.position.z = 100;
+  landmark.position.z = 200;
+  duplicate.position.z = 300;
+  landmark.receiveShadow = duplicate.receiveShadow = true;
   empty.count = 0;
   hidden.visible = false;
   hidden.add(new THREE.Mesh(geometry, b));
-  scene.add(...meshes, hidden, behind, empty);
+  scene.add(...meshes, hidden, behind, landmark, duplicate, empty);
   const activeMaterials = new Set(),
     compiled = [],
     progress = [];
@@ -30,6 +35,7 @@ test('shader jobs overlap independent materials while serializing a shared mater
           assert.equal(passedCamera, camera);
           assert.equal(passedScene, scene);
           assert.equal(scene.matrixWorldAutoUpdate, false);
+          assert.equal(object.frustumCulled, object !== landmark);
           assert.equal(activeMaterials.has(object.material), false);
           activeMaterials.add(object.material);
           concurrent++;
@@ -42,17 +48,18 @@ test('shader jobs overlap independent materials while serializing a shared mater
       },
       scene,
       camera,
-      { concurrency: 2, onProgress: (p) => progress.push(p.completed) },
+      { concurrency: 2, onProgress: (p) => progress.push(p.completed), prewarmOffscreen: true },
     );
     assert.equal(peak, 2);
-    assert.deepEqual(new Set(compiled), new Set(meshes));
-    assert.deepEqual(result, { jobs: 2, objects: 3 });
+    assert.deepEqual(new Set(compiled), new Set([...meshes, landmark]));
+    assert.deepEqual(result, { jobs: 2, objects: 4 });
     assert.deepEqual(progress, [1, 2]);
     assert.equal(
       meshes.every((mesh) => mesh.frustumCulled),
       true,
     );
     assert.equal(hidden.visible, false);
+    assert.equal(landmark.frustumCulled, true);
     assert.equal(empty.visible, true);
     assert.equal(scene.matrixWorldAutoUpdate, true);
   } finally {
