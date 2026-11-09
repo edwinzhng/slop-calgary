@@ -52,11 +52,11 @@ const LOOKS = {
   },
   midnight: {
     exposure: 1.04,
-    contrast: 1.08,
-    saturation: 1.06,
-    balance: [0.985, 1.0, 1.035],
-    bloom: 0.3,
-    threshold: 1.0,
+    contrast: 1.07,
+    saturation: 1.14,
+    balance: [0.99, 1.0, 1.055],
+    bloom: 0.39,
+    threshold: 0.91,
   },
 };
 

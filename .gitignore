@@ -29,9 +29,11 @@
 !/app/building-models.js
 !/app/building-ownership.js
 !/app/camera-collision.js
+!/app/chinatown.js
 !/app/city-ground-profile.js
 !/app/city-mesh-transport.js
 !/app/city-meshes.js
+!/app/city-murals.js
 !/app/city-surface-terrain.js
 !/app/city-uniforms.js
 !/app/discovery-spots.js
@@ -46,6 +48,7 @@
 !/app/facade-visibility.js
 !/app/car-instances.js
 !/app/fallback-buildings.js
+!/app/high-park.js
 !/app/ford-crossings.js
 !/app/geo.js
 !/app/ground-surfaces.js

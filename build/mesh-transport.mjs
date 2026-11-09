@@ -71,8 +71,10 @@ const DETAIL_AREAS = [
 const DETAIL_SOURCES = [
   'app/building-foundations.js',
   'app/building-ownership.js',
-  'app/discovery-spots.js',
+  'app/chinatown.js',
+  'app/city-murals.js',
   'app/hayden-block.js',
+  'app/high-park.js',
   'app/king-eddy-detail.js',
   'app/landmark-ground.js',
   'app/landmark-telus.js',

@@ -10,6 +10,7 @@ import { unpackCityMeshTransport } from '../app/city-mesh-transport.js';
 import { CITY_MESH_MANIFEST_URL, createCityMeshes, loadCityMeshes } from '../app/city-meshes.js';
 import * as THREE from 'three/webgpu';
 import { buildingProfile, decorateBuildingGeometry } from '../app/building-models.js';
+import { MURALS } from '../app/city-murals.js';
 import {
   MAP_DATA_TRANSPORT,
   unpackBinaryMapData,
@@ -309,6 +310,8 @@ test('production emits independent full and core survey assets without preloadin
   assert.deepEqual(gunzipSync(full.source), Buffer.from(packed));
   assert.ok(core.source.length < full.source.length * 0.3);
   const coreBytes = unpackCityMeshTransport(gunzipSync(core.source), coreMeta);
+  const coreIds = new Set(coreMeta.buildings.map(({ id }) => id));
+  for (const [id] of MURALS) assert.ok(coreIds.has(id), `mural wall ${id} needs its full survey mesh`);
   const byId = new Map(manifest.buildings.map((r) => [r.id, r]));
   const simplified = new Map();
   for (let i = 0; i < coreMeta.compactHeights.length; i += 2)

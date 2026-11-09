@@ -30,6 +30,8 @@ import { footprintContact, movementBody } from './camera-collision.js';
 import { buildRoadMarkings } from './road-markings.js';
 import { createRailClearance, trimRailCollider, trimRailGeometry } from './rail-clearance.js';
 import { createPlus15Clearance } from './plus15-clearance.js';
+import { createCityMurals } from './city-murals.js';
+import { applyChinatownFinish } from './chinatown.js';
 import { createParks } from './parks.js';
 import { buildWesternTowerLights } from './landmark-west.js';
 import { coveredFallbacks, fallbackVolumeKey } from './building-ownership.js';
@@ -398,6 +400,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
         : null,
   });
   const authoredStorefrontPlaceIds = new Set();
+  const murals = createCityMurals(scene);
   landmark.colliders.push(...neighborhoods.colliders);
   landmark.labels.push(...neighborhoods.labels);
   const northBowOverpass = northBowModel ? buildNorthBowOverpass(scene, northBowModel) : null;
@@ -888,6 +891,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
             curveSegments: 1,
           }).rotateX(-Math.PI / 2);
     decorateBuildingGeometry(g, b, profile);
+    applyChinatownFinish(b, g);
     if (placement) buildingGround.placeGeometry(g, placement);
     const low = (meshRecord?.minHeight ?? 0) + (placement?.offsetM || 0);
     const cuts = railClearance.find(b, box, low, height + (placement?.offsetM || 0));
@@ -899,6 +903,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
       g.dispose();
       continue;
     }
+    murals.add(b, g, placement?.offsetM);
     const reliefAt = terrain?.regionalOffsetAt;
     const lowRim = meshRecord?.minHeight ?? 0;
     if (
@@ -1374,6 +1379,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
       enrichment.cityMeshes?.createGeometry(id) ||
       null,
     landmark,
+    highPark: neighborhoods.highPark?.place,
     roadIndex,
     buildingIndex,
     waterIndex,
@@ -1431,6 +1437,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
       parkStructures: parkStructures.stats,
       parkArt: parkArt.stats,
       neighborhoods: neighborhoods.stats,
+      murals: murals.painted,
       islandTerrain: terrain?.stats,
       islandPlanting: { trees: vegetation.stats.inferredTrees, shrubs: islandPlanting.shrubs },
       ...(buildingGround ? { ordinaryBuildingGround: buildingGround.stats } : {}),
@@ -1556,7 +1563,7 @@ export async function buildWorld(scene, data, onProgress = () => {}, enrichment 
     },
   };
   world.walkSupportHeight = createWalkingSupport({
-    groundHeight,
+    groundHeight: (x, z, hint) => neighborhoods.highPark?.supportAt(x, z, hint) ?? groundHeight(x, z, hint),
     stepColliders: [
       ...landmark.walkSlabs,
       ...developments.colliders,

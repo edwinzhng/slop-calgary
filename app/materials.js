@@ -35,7 +35,7 @@ import { streetLightWash } from './street-light-wash.js';
 
 export { windowGlow, cityUniforms } from './city-uniforms.js';
 const cache = new Map();
-const palettes = [0x889ca4, 0x647b86, 0xaab4b6, 0xb2a393, 0x9a8473, 0x69808c, 0xb8b1a1, 0x897e73];
+const palettes = [0x889ca4, 0x647b86, 0xaab4b6, 0xb2a393, 0x9a8473, 0x69808c, 0xb8b1a1, 0xb59691];
 // Three's shadow override samples colorNode.a even for vec3 inputs. These
 // surfaces are opaque, so its alpha requires none of their facade shading.
 const opaqueSurfaceColor = Fn(([mainColor], builder) =>

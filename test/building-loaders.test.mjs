@@ -7,9 +7,75 @@ import { loadCityMeshes } from '../app/city-meshes.js';
 import { footprintContact, movementBody } from '../app/camera-collision.js';
 import { makeRoadIndex } from '../app/geo.js';
 import { createPlus15Clearance } from '../app/plus15-clearance.js';
+import { MURALS, muralGeometry } from '../app/city-murals.js';
+import { buildHighPark } from '../app/high-park.js';
+import { createWalkingSupport } from '../app/walk-support.js';
+import { project } from '../app/geo.js';
 
 const map = JSON.parse(await fs.readFile(new URL('../data/calgary.json', import.meta.url)));
 const fileFetch = async (url) => new Response(await fs.readFile(url));
+
+test('the High Park arrival and boardwalk stay on the surveyed roof above street support', async () => {
+  const meshes = await loadCityMeshes({ fetcher: fileFetch });
+  const steps = [];
+  const park = buildHighPark({
+    cityMeshes: meshes,
+    steps,
+    labels: [],
+    add: (_, geometry) => geometry.dispose(),
+    box() {},
+    beam() {},
+    sign() {},
+    rectangle(id, x, z, w, d, minHeight, height) {
+      return {
+        id,
+        minHeight,
+        height,
+        ring: [
+          [x - w / 2, z - d / 2],
+          [x + w / 2, z - d / 2],
+          [x + w / 2, z + d / 2],
+          [x - w / 2, z + d / 2],
+        ],
+      };
+    },
+  });
+  assert.ok(park);
+  const [start, z] = project(park.place.lon, park.place.lat);
+  const walk = createWalkingSupport({
+    groundHeight: (x, z, hint) => park.supportAt(x, z, hint) ?? 0.2,
+    stepColliders: steps,
+  });
+  assert.equal(walk(start, z, 0.2), 0.2);
+  let y = park.place.elevation;
+  for (let x = start; x <= 237; x += 0.3) {
+    const next = walk(x, z, y);
+    assert.ok(next > 14.9 && next < 16 && Math.abs(next - y) < 0.08, `roof gap at ${x}`);
+    y = next;
+  }
+});
+
+test('the authored murals fit their surveyed wall patches and reject an unrelated owner', async () => {
+  const meshes = await loadCityMeshes({ fetcher: fileFetch });
+  for (const [index, mural] of MURALS.entries()) {
+    const wall = meshes.createGeometry(mural[0]);
+    const paint = muralGeometry(wall, mural, index);
+    assert.ok(paint, mural[7]);
+    const uv = paint.attributes.uv.array;
+    let area = 0;
+    for (let i = 0; i < uv.length; i += 6)
+      area +=
+        Math.abs(
+          (uv[i + 2] - uv[i]) * (uv[i + 5] - uv[i + 1]) - (uv[i + 3] - uv[i + 1]) * (uv[i + 4] - uv[i]),
+        ) / 2;
+    const patch = (248 / 768) ** 2;
+    assert.ok(area >= patch * 0.95 && area <= patch * 1.01, mural[7]);
+    wall.userData.cityMesh.structureIds = [0];
+    assert.equal(muralGeometry(wall, mural, index), null);
+    paint.dispose();
+    wall.dispose();
+  }
+});
 
 test('6 Avenue SW uses the measured underside of its Plus 15 across the whole roadway', async () => {
   const street = map.roads.find((road) => road.id === 'osm-way-166790915-0');

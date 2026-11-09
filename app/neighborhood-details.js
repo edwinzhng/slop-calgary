@@ -4,6 +4,8 @@ import { bounds, inPolygon, nearestOnSegment, seeded } from './geo.js';
 import ev606Site from '../data/SIMMONS_OCCLUSION_GROUND.json' with { type: 'json' };
 import { bloomBeamCollider } from './park-art.js';
 import { buildDiscoverySpots } from './discovery-spots.js';
+import { buildHighPark } from './high-park.js';
+import { buildChinatownDetails } from './chinatown.js';
 import { createLinearPolygonGeometry } from './linear-polygon-geometry.js';
 
 // City outline under the completed six-storey building (ATLRG's EV606).
@@ -1336,7 +1338,9 @@ export function buildNeighborhoodDetails(
     stats.flowerBeds++;
   }
 
-  buildDiscoverySpots({ add, box, beam, rectangle, sign, labels, groundHeight, cityMeshes, steps });
+  buildChinatownDetails({ cityMeshes, sign, box, add, labels });
+  buildDiscoverySpots({ add, box, beam, rectangle, labels, groundHeight });
+  const highPark = buildHighPark({ add, box, beam, rectangle, sign, labels, cityMeshes, steps });
   const material = new THREE.MeshStandardNodeMaterial({ vertexColors: true, roughness: 0.82 });
   for (const [name, parts] of groups) {
     const mesh = new THREE.Mesh(mergeGeometries(parts), material);
@@ -1346,7 +1350,7 @@ export function buildNeighborhoodDetails(
     mesh.receiveShadow = true;
     scene.add(mesh);
   }
-  return { colliders, labels, stats, steps, authoredStorefrontBuildingIds };
+  return { colliders, labels, stats, steps, authoredStorefrontBuildingIds, highPark };
 }
 
 const avenueBannerPoles = new Set([

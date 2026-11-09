@@ -1,5 +1,5 @@
 import * as THREE from 'three/webgpu';
-import { vec3 } from 'three/tsl';
+import { smoothstep, vec3 } from 'three/tsl';
 import { windowGlow } from './city-uniforms.js';
 import { inPolygon } from './geo.js';
 
@@ -178,7 +178,13 @@ function sourceVerticalSpines(geometry, components) {
 }
 
 /** Optional night treatment only: no building replacement or collision override. */
-export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadata = [], { buildingGround } = {}) {
+export function buildWesternTowerLights(
+  scene,
+  data,
+  cityMeshes,
+  buildingMetadata = [],
+  { buildingGround } = {},
+) {
   const group = new THREE.Group();
   group.name = 'Western Calgary architectural crown lighting';
   scene.add(group);
@@ -204,12 +210,18 @@ export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadat
       triangles: 0,
       pointLights: 0,
     };
-  function addTower(name, components, geometry, record, { inferSlant = false, spines = false } = {}) {
+  function addTower(
+    name,
+    components,
+    geometry,
+    record,
+    { inferSlant = false, northCrest = false, spines = false } = {},
+  ) {
     if (!components.length) {
       missing.push(`${name}: no usable mapped upper roof`);
       return;
     }
-    const color = new THREE.Color(/eighth/i.test(name) ? 0xc1dfff : 0x78c6ff),
+    const color = new THREE.Color(spines ? 0xc1dfff : northCrest ? 0x9edbff : 0x79cdfa),
       tower = {
         name,
         sourceDates: record?.sourceDates || [],
@@ -222,8 +234,8 @@ export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadat
     const addEdge = (edge, offset = 0.1) => {
       const a = [edge[0][0], edge[0][1] + offset, edge[0][2]],
         b = [edge[1][0], edge[1][1] + offset, edge[1][2]];
-      core.beam(a, b, 0.12, color);
-      halo.beam(a, b, 0.38, color);
+      core.beam(a, b, spines ? 0.12 : 0.11, color);
+      halo.beam(a, b, spines ? 0.38 : 0.52, color);
       tower.ledSegments++;
       stats.ledSegments++;
     };
@@ -246,7 +258,7 @@ export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadat
           const j = (i + 1) % outline.length,
             a = [outline[i][0], baseY, outline[i][1]],
             b = [outline[j][0], baseY, outline[j][1]];
-          glass.quad(a, b, upper[j], upper[i], new THREE.Color(0x607f91));
+          glass.quad(a, b, upper[j], upper[i], new THREE.Color(0x6babc6));
           addEdge([upper[i], upper[j]], 0.04);
           core.beam(a, upper[i], 0.035, new THREE.Color(0xa3b7be));
         }
@@ -257,7 +269,11 @@ export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadat
     }
     for (const component of components) {
       stats.sourceRoofComponents++;
-      if (!tower.inferredCrown) for (const edge of component.edges.slice(0, 128)) addEdge(edge);
+      if (!tower.inferredCrown)
+        for (const edge of component.edges.slice(0, 128)) {
+          if (northCrest && (edge[0][2] + edge[1][2]) / 2 > component.z + 0.45) continue;
+          addEdge(edge);
+        }
       for (const triangle of component.triangles)
         wash.triangle(...triangle.map((p) => [p[0], p[1] + 0.05, p[2]]), color);
     }
@@ -307,11 +323,12 @@ export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadat
     selected.forEach((cluster, i) => {
       const top = Math.max(...cluster.map((c) => c.maxY)),
         roofs = cluster
-          .filter((c) => c.maxY >= top - 24)
+          .filter((c) => c.maxY >= top - 1.2)
           .sort((a, b) => b.area - a.area)
-          .slice(0, i === 1 ? 1 : 3);
+          .slice(0, 1);
       addTower(`West Village Towers ${i === 0 ? 'west' : 'east'}`, roofs, geometry, record, {
         inferSlant: i === 1,
+        northCrest: i === 0,
       });
     });
     if (selected.length < 2)
@@ -344,14 +361,15 @@ export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadat
     stats.drawCalls++;
     stats.triangles += geometry.attributes.position.count / 3;
   }
+  const night = smoothstep(0.15, 1.6, windowGlow);
   const coreMaterial = new THREE.MeshBasicNodeMaterial({
     vertexColors: true,
     transparent: true,
     depthWrite: false,
     toneMapped: false,
   });
-  coreMaterial.colorNode = vec3(1).mul(windowGlow.mul(3.4).add(0.02));
-  coreMaterial.opacityNode = windowGlow.mul(0.99).add(0.01);
+  coreMaterial.colorNode = vec3(1).mul(night.mul(3.1).add(0.08));
+  coreMaterial.opacityNode = night;
   addMesh(core, coreMaterial, 'Mapped architectural roof LEDs and facade spines');
   const glowMaterial = new THREE.MeshBasicNodeMaterial({
     vertexColors: true,
@@ -360,7 +378,7 @@ export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadat
     blending: THREE.AdditiveBlending,
     toneMapped: false,
   });
-  glowMaterial.opacityNode = windowGlow.mul(0.075);
+  glowMaterial.opacityNode = night.mul(0.21);
   addMesh(halo, glowMaterial, 'Soft architectural LED halos');
   const washMaterial = new THREE.MeshBasicNodeMaterial({
     vertexColors: true,
@@ -368,21 +386,21 @@ export function buildWesternTowerLights(scene, data, cityMeshes, buildingMetadat
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     side: THREE.DoubleSide,
+    forceSinglePass: true,
     toneMapped: false,
   });
-  washMaterial.opacityNode = windowGlow.mul(0.16);
+  washMaterial.opacityNode = night.mul(0.19);
   addMesh(wash, washMaterial, 'Blue-white upper-roof light wash');
-  addMesh(
-    glass,
-    new THREE.MeshBasicNodeMaterial({
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.19,
-      depthWrite: false,
-      side: THREE.DoubleSide,
-    }),
-    'Inferred translucent West Village east crown',
-  );
+  const glassMaterial = new THREE.MeshBasicNodeMaterial({
+    vertexColors: true,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    forceSinglePass: true,
+  });
+  glassMaterial.colorNode = vec3(1).mul(night.mul(1.1).add(0.74));
+  glassMaterial.opacityNode = night.mul(0.17).add(0.19);
+  addMesh(glass, glassMaterial, 'Inferred translucent West Village east crown');
   return {
     group,
     towers,

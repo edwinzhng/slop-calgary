@@ -38,20 +38,9 @@ const garden = {
   ],
 };
 
-export function buildDiscoverySpots({
-  add,
-  box,
-  beam,
-  rectangle,
-  sign,
-  labels,
-  groundHeight,
-  cityMeshes,
-  steps,
-}) {
+export function buildDiscoverySpots({ add, box, beam, rectangle, sign, labels, groundHeight }) {
   const dog = 'East Village dog park',
-    plots = 'Crossroads Community Garden',
-    high = 'High Park';
+    plots = 'Crossroads Community Garden';
   const fence = (name, ring, gap) => {
     for (const [i, a] of ring.entries()) {
       const b = ring[(i + 1) % ring.length],
@@ -112,72 +101,4 @@ export function buildDiscoverySpots({
     }
   }
   labels.push({ name: plots, x: 1672, z: -81, height: 4 });
-
-  // The City mesh owns the roof and vertical collisions. The boardwalk
-  // samples the actual exposed roof rather than using the stair tower top.
-  const record = cityMeshes?.get('city-outline-26619-0');
-  if (record?.structureIds.length !== 1 || record.structureIds[0] !== 1352575 || record.indexCount !== 1077)
-    return;
-  const roof = cityMeshes.createGeometry(record.id);
-  const roofMesh = new THREE.Mesh(roof),
-    ray = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0));
-  const level = (x, z) => {
-    ray.ray.origin.set(x, 32, z);
-    return ray.intersectObject(roofMesh)[0]?.point.y ?? -30;
-  };
-  const colors = [0xd08fa3, 0xdba173, 0xdec27a, 0x8cad99, 0x7cabad, 0xaaa1c3];
-  let tiles = 0;
-  for (let x = 50; x < 241; x += 2) {
-    const z = 232.5 + Math.sin(x * 0.034) * 2.75;
-    const y = level(x, z);
-    if (y < 12 || y > 18) continue;
-    box(high, x, y + 0.058, z, 2.03, 0.103, 2.75, colors[Math.floor((x - 50) / 32) % colors.length]);
-    const step = rectangle(`high-park-boardwalk-${x}`, x, z, 2.03, 2.75, y, y + 0.11);
-    step.type = 'park-step';
-    steps.push(step);
-    tiles++;
-  }
-  if (tiles) {
-    for (const [x, z, paint] of [
-      [90, 237, 0xd686a5],
-      [178, 239, 0x669f9f],
-    ]) {
-      const y = level(x, z);
-      if (y < 12 || y > 18) continue;
-      box(high, x, y + 0.04, z, 8, 0.055, 5, paint);
-      for (const u of [-2.4, 2.4]) {
-        const a = new THREE.Vector3(x + u, y, z - 1.65),
-          b = new THREE.Vector3(x + u, y + 2.64, z);
-        beam(high, a, b, 0.08, 0.068, paint, 6);
-        beam(high, new THREE.Vector3(x + u, y, z + 1.65), b, 0.08, 0.068, paint, 6);
-      }
-      beam(
-        high,
-        new THREE.Vector3(x - 2.5, y + 2.64, z),
-        new THREE.Vector3(x + 2.5, y + 2.64, z),
-        0.075,
-        0.075,
-        paint,
-        8,
-      );
-      for (const u of [-0.47, 0.47])
-        beam(
-          high,
-          new THREE.Vector3(x + u, y + 0.68, z),
-          new THREE.Vector3(x + u, y + 2.59, z),
-          0.018,
-          0.018,
-          0x707774,
-          5,
-        );
-      box(high, x, y + 0.65, z, 1.16, 0.065, 0.33, 0xd2bd93);
-      rectangle(`high-park-swing-${x}`, x, z, 1.16, 0.33, y + 0.615, y + 0.683);
-    }
-    const y = level(151, 234);
-    if (y > 12 && y < 18)
-      sign('High Park sign', 'HIGH PARK', 151, y + 1.25, 235.92, 5.2, 1.25, 0, '#243d4b', '#e3bf81');
-    labels.push({ name: high, x: 151, z: 232, height: 21 });
-  }
-  roof.dispose();
-  roofMesh.material.dispose();
 }

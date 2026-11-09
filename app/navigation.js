@@ -60,6 +60,14 @@ export const PLACES = [
     lat: 51.0386,
     bearing: 1.57,
   },
+  {
+    name: 'Chinatown',
+    sub: 'Chinese Cultural Centre & Centre Street',
+    lon: -114.0651669,
+    lat: 51.0511914,
+    bearing: -2.75,
+    onFoot: true,
+  },
 ];
 export const VIEW_CAMERAS = [
   { id: 'chase', label: 'Third person', shortcut: '5' },
@@ -445,20 +453,36 @@ export function createNavigation(
     const i = VIEW_CAMERAS.findIndex((p) => p.id === state.cameraPreset);
     setCamera(VIEW_CAMERAS[i < 0 ? 0 : (i + step + VIEW_CAMERAS.length) % VIEW_CAMERAS.length].id);
   }
-  function teleport(lon, lat, name, placementMode = state.mode) {
+  function teleport(lon, lat, name, placementMode = state.mode, elevation) {
     if (!travelModes.includes(placementMode)) placementMode = state.mode;
     walkVelocityX = walkVelocityZ = 0;
     const [x, z] = project(lon, lat);
-    [state.x, state.z] = safePosition(
-      x,
-      z,
-      placementMode === 'drive' || placementMode === 'cycle',
-      placementMode,
-    );
+    const landing =
+      placementMode === 'walk' && Number.isFinite(elevation)
+        ? world.walkSupportHeight?.(x, z, elevation)
+        : null;
+    const elevated =
+      Number.isFinite(landing) &&
+      Math.abs(landing - elevation) < 0.45 &&
+      !world.bodyBlocked({ x, y: landing, z }, movementBody('walk', state.heading));
+    if (elevated) {
+      state.x = x;
+      state.z = z;
+      state.mode = 'walk';
+      state.tour = state.running = false;
+    } else {
+      [state.x, state.z] = safePosition(
+        x,
+        z,
+        placementMode === 'drive' || placementMode === 'cycle',
+        placementMode,
+      );
+    }
     state.speed = state.groundSpeed = state.verticalSpeed = 0;
     state.yawRate = state.lateralSpeed = state.steerAngle = 0;
-    state.y =
-      placementMode === 'fly'
+    state.y = elevated
+      ? landing
+      : placementMode === 'fly'
         ? Math.max(70, state.y, world.groundHeight(state.x, state.z) + 35)
         : placementMode === 'walk' && world.walkSupportHeight
           ? world.walkSupportHeight(state.x, state.z)

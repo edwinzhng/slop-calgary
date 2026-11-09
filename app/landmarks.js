@@ -1322,11 +1322,25 @@ export function buildLandmarks(scene, context = {}) {
     [70, 44],
     [-70, 44],
   ];
-  const bankersFacade = facadeMaterial(6);
+  const bankersFacade = facadeMaterial(7);
+  const bankersGold = new THREE.MeshStandardNodeMaterial({
+    color: 0xc1a578,
+    roughness: 0.38,
+    metalness: 0.53,
+  });
+  const bankersSilver = new THREE.MeshStandardNodeMaterial({
+    color: 0xb8bdbe,
+    roughness: 0.4,
+    metalness: 0.58,
+  });
+  bankersGold.name = 'Bankers Hall west champagne metal';
+  bankersSilver.name = 'Bankers Hall east silver metal';
+  bankersGold.emissiveNode = color(0xb79465).mul(windowGlow).mul(0.12);
+  bankersSilver.emissiveNode = color(0x9eacbc).mul(windowGlow).mul(0.11);
   const measuredBankers = addMeasured(['city-outline-24994-0'], (p, n, i) => {
     const height = (p.getY(i) + p.getY(i + 1) + p.getY(i + 2)) / 3;
     const x = (p.getX(i) + p.getX(i + 1) + p.getX(i + 2)) / 3;
-    if (height > 174) return x < 195 ? materials.gold : materials.steel;
+    if (height > 174) return x < 195 ? bankersGold : bankersSilver;
     return Math.abs(n.getY(i)) > 0.5 ? materials.roof : bankersFacade;
   });
   if (!measuredBankers) {
@@ -1339,8 +1353,8 @@ export function buildLandmarks(scene, context = {}) {
       }
     }
     for (const [cx, cz, crownMaterial] of [
-      [-27.35, -1.75, materials.gold],
-      [37.8, 10.45, materials.steel],
+      [-27.35, -1.75, bankersGold],
+      [37.8, 10.45, bankersSilver],
     ]) {
       box(36, 173, 50, cx, 86.5, cz, bankersFacade);
       for (const y of [13, 49, 86, 124, 165, 172.5]) box(36.8, 0.6, 50.8, cx, y, cz, materials.sandstone);

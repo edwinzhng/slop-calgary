@@ -9,6 +9,7 @@ export function createUI(nav, world, renderer, setTime, setQuality, camera, opti
     atlas = $('atlas'),
     help = $('help'),
     speedValue = $('speed-value');
+  const destinations = world.highPark ? [...PLACES, world.highPark] : PLACES;
   const router = createRouter(world.data.roads);
   let selectedDestination = null,
     routeTarget = null,
@@ -226,13 +227,14 @@ export function createUI(nav, world, renderer, setTime, setQuality, camera, opti
     selectedDestination = null;
     $('map-destination').hidden = true;
     if (place.bearing !== undefined) nav.state.heading = place.bearing;
-    nav.teleport(place.lon, place.lat, place.name, place.business ? 'walk' : nav.state.mode);
-    if (place.business) nav.mode('walk');
+    const onFoot = place.business || place.onFoot;
+    nav.teleport(place.lon, place.lat, place.name, onFoot ? 'walk' : nav.state.mode, place.elevation);
+    if (onFoot) nav.mode('walk');
     if ($('teleport-popover').matches(':popover-open')) $('teleport-popover').hidePopover();
     trail.length = 0;
     atlas.close();
   };
-  for (const place of PLACES) {
+  for (const place of destinations) {
     const b = document.createElement('button');
     b.textContent = place.name;
     b.className = 'pop-item tp-btn';
@@ -880,7 +882,7 @@ export function createUI(nav, world, renderer, setTime, setQuality, camera, opti
     results.replaceChildren();
     results.hidden = !q;
     if (!q) return;
-    const choices = PLACES.filter((p) => !q || p.name.toLowerCase().includes(q)).map((p) => ({ ...p }));
+    const choices = destinations.filter((p) => p.name.toLowerCase().includes(q)).map((p) => ({ ...p }));
     for (const landmark of world.landmark.labels) {
       if (!landmark.name.toLowerCase().includes(q) || choices.some((p) => p.name === landmark.name)) continue;
       const [lon, lat] = unproject(landmark.x, landmark.z);
