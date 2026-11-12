@@ -41,18 +41,23 @@ import { configureStaticBatches } from './static-batches.js';
 import { createRegionalHorizon } from './regional-horizon.js';
 import { createLoadingProgress } from './loading-progress.js';
 
-const progress = createLoadingProgress(document);
+const updateProgress = createLoadingProgress(document);
+const graphics = new AbortController();
+const progress = (...args) => {
+  graphics.signal.throwIfAborted();
+  return updateProgress(...args);
+};
 const qualityLevels = ['performance', 'balanced', 'high'];
-let renderer,
-  quality = 'performance';
+const query = new URLSearchParams(location.search);
+const compatibility = query.get('compat') === '1';
+let quality = 'performance';
 try {
   const savedQuality = localStorage.getItem('calgary-quality');
-  if (qualityLevels.includes(savedQuality)) quality = savedQuality;
+  if (!compatibility && qualityLevels.includes(savedQuality)) quality = savedQuality;
 } catch {}
 document.body.dataset.quality = quality;
 async function init() {
   const start = performance.now();
-  const query = new URLSearchParams(location.search);
   const profiler = createPerformanceMonitor({ enabled: query.get('profile') === '1' });
   const frameLabel = document.getElementById('fps');
   frameLabel.hidden = !profiler.enabled;
@@ -84,13 +89,28 @@ async function init() {
     );
   const scene = new THREE.Scene(),
     camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.2, 22000);
-  renderer = new THREE.WebGPURenderer({
+  const renderer = new THREE.WebGPURenderer({
     antialias: quality !== 'performance',
     powerPreference: 'high-performance',
-    forceWebGL: query.get('renderer') === 'webgl',
+    forceWebGL: compatibility || query.get('renderer') === 'webgl',
     reversedDepthBuffer: true,
     trackTimestamp: profiler.enabled && query.get('gpu') === '1',
   });
+  let ready = false;
+  const onDeviceLost = renderer.onDeviceLost.bind(renderer);
+  renderer.onDeviceLost = (info) => {
+    onDeviceLost(info);
+    if (graphics.signal.aborted) return;
+    graphics.abort();
+    if (!ready && touchDevice && info.api === 'WebGPU' && !compatibility) {
+      location.replace(compatibilityUrl());
+      return;
+    }
+    if (renderer.hasInitialized()) renderer.setAnimationLoop(null);
+    showError('Graphics were interrupted. Reload to keep exploring.', {
+      offerCompatibility: !compatibility && (info.api === 'WebGPU' || quality !== 'performance'),
+    });
+  };
   const requestedMode = query.get('mode');
   const [
     data,
@@ -159,6 +179,7 @@ async function init() {
     // Driver initialization can overlap required downloads and JSON decoding.
     renderer.init(),
   ]);
+  graphics.signal.throwIfAborted();
   const haydenBlock = haydenSource.provider,
     haydenBlockError = haydenSource.error,
     partialBuildings = partialSource.provider,
@@ -179,7 +200,11 @@ async function init() {
   renderer.shadowMap.enabled = !mobilePerformance;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   document.getElementById('viewport').append(renderer.domElement);
-  const pipeline = createCityPipeline(renderer, scene, camera, quality, { direct: directRendering });
+  const pipeline = createCityPipeline(renderer, scene, camera, quality, {
+    direct: directRendering,
+    // Phones can compile offscreen variants as they come into view.
+    prewarmOffscreen: !mobilePerformance,
+  });
   cityUniforms.uFacadeDetailDistance.value = quality === 'high' ? 600 : 360;
   const sun = new THREE.DirectionalLight(0xffd0a0, 3.1);
   sun.castShadow = !mobilePerformance;
@@ -346,6 +371,7 @@ async function init() {
     signalSites: signalData.sites,
     parkData,
   });
+  graphics.signal.throwIfAborted();
   world.stats.staticBatches = staticBatches.stats;
   profiler.phase('world');
   let actors;
@@ -444,7 +470,11 @@ async function init() {
         return;
       }
       nav.save();
-      location.reload();
+      if (compatibility) {
+        const url = new URL(location.href);
+        url.searchParams.delete('compat');
+        location.replace(url);
+      } else location.reload();
       return;
     }
     quality = value;
@@ -660,6 +690,7 @@ async function init() {
     for (const restore of restoreFacades) restore();
     for (const object of emptyInstances) object.visible = true;
   }
+  graphics.signal.throwIfAborted();
   actors.update(0, nav.state, camera, quality);
   parkLife.update(0, 0, camera, quality);
   staticBatches.beginFrame();
@@ -668,10 +699,13 @@ async function init() {
   progress(1, 'Welcome to Slop Calgary', true);
   metrics.startupMs = Math.round(performance.now() - start);
   metrics.ready = true;
+  ready = true;
   if (auditCamera) sendAudit('ready', { pose: auditCamera.evidence });
   const loading = document.getElementById('loading');
-  loading.style.opacity = '0';
-  setTimeout(() => loading.remove(), 650);
+  loading.classList.add('hidden');
+  setTimeout(() => {
+    if (loading.classList.contains('hidden')) loading.remove();
+  }, 650);
   let last = performance.now(),
     accum = 0,
     frames = 0,
@@ -850,33 +884,43 @@ async function init() {
     resizeBuffer();
     renderer.setSize(innerWidth, innerHeight);
   });
-  renderer.domElement.addEventListener('webglcontextlost', (e) => {
-    e.preventDefault();
-    renderer.setAnimationLoop(null);
-    showError('Graphics context was interrupted. Reload to continue exploring.');
-  });
 }
-function showError(message) {
+function compatibilityUrl() {
+  const url = new URL(location.href);
+  url.searchParams.set('compat', '1');
+  return url;
+}
+function showError(message, { offerCompatibility = false } = {}) {
   const loading =
     document.getElementById('loading') ||
     document.body.appendChild(Object.assign(document.createElement('div'), { id: 'loading' }));
-  loading.style.opacity = '1';
-  loading.replaceChildren();
+  loading.classList.remove('hidden');
+  loading.setAttribute('role', 'status');
+  const content = document.createElement('div');
+  content.className = 'loader loader-error';
   const title = document.createElement('h2');
   title.textContent = 'Calgary is taking a detour.';
   const text = document.createElement('p');
   text.textContent = message;
   const retry = document.createElement('button');
   retry.textContent = 'Reload the city';
-  retry.style.marginTop = '24px';
-  retry.style.padding = '12px 20px';
-  retry.style.border = '1px solid currentColor';
   retry.onclick = () => location.reload();
-  loading.append(title, text, retry);
+  const actions = document.createElement('div');
+  actions.className = 'loader-actions';
+  actions.append(retry);
+  if (offerCompatibility) {
+    const basicGraphics = document.createElement('a');
+    basicGraphics.href = compatibilityUrl();
+    basicGraphics.textContent = 'Try basic graphics';
+    actions.append(basicGraphics);
+  }
+  content.append(title, text, actions);
+  loading.replaceChildren(content);
 }
 init().catch((error) => {
+  if (graphics.signal.aborted) return;
   console.error(error);
-  showError(
-    error.message || 'The city could not start. Try a current browser with hardware acceleration enabled.',
-  );
+  showError('The city could not start. Reload to try again.', {
+    offerCompatibility: !compatibility && query.get('renderer') !== 'webgl',
+  });
 });

@@ -15,7 +15,13 @@ import { ssr } from 'three/addons/tsl/display/SSRNode.js';
 import { createPostProcessing } from './post-processing.js';
 import { compileSceneShaders } from './shader-warmup.js';
 
-export function createCityPipeline(renderer, scene, camera, quality = 'balanced', { direct = false } = {}) {
+export function createCityPipeline(
+  renderer,
+  scene,
+  camera,
+  quality = 'balanced',
+  { direct = false, prewarmOffscreen = true } = {},
+) {
   // This combined SSR/MRT/bloom graph produced a black final image on the
   // tested WebGL2 backend. Keep its reliable direct path;
   // facade room/environment reflections and all city materials still render.
@@ -33,7 +39,7 @@ export function createCityPipeline(renderer, scene, camera, quality = 'balanced'
         });
         return compileSceneShaders(renderer, scene, camera, {
           onProgress,
-          prewarmOffscreen: !renderer.backend.isWebGPUBackend,
+          prewarmOffscreen: prewarmOffscreen && !renderer.backend.isWebGPUBackend,
         });
       },
       setQuality() {},
